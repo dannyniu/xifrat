@@ -1,0 +1,31 @@
+figure.algorithm {
+  padding:              0pc 1pc;
+  border-top:           solid medium black;
+  border-bottom:        solid medium black;
+}
+
+figure.algorithm figcaption {
+  text-align:           center;
+  border-bottom:        solid thin black;
+}
+
+table.default {
+  position:             relative;
+  left:                 20%;
+  width:                60%;
+  border:               solid thin black;
+  border-collapse:      collapse;
+}
+
+table.default caption {
+  border:               solid thin black;
+}
+
+table.default th,
+table.default td {
+  border:               solid thin black;
+}
+
+table.numerical td {
+  text-align:           center;
+}

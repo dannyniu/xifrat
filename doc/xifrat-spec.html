@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='UTF-8'>
+<style>:root {
+  --math-init-font-size:        18px;
+}
+
+/* @font-face {
+  font-family:          hc-math;
+  src:                  url("gnu-freefont/FreeSerif.woff");
+  font-style:           normal;
+  font-weight:          normal;
+}
+
+@font-face {
+  font-family:          hc-math;
+  src:                  url("gnu-freefont/FreeSerifItalic.woff");
+  font-style:           italic;
+  font-weight:          normal;
+}
+
+@font-face {
+  font-family:          hc-math;
+  src:                  url("gnu-freefont/FreeSerifBold.woff");
+  font-style:           normal;
+  font-weight:          bold;
+}
+
+@font-face {
+  font-family:          hc-math;
+  src:                  url("gnu-freefont/FreeSerifBoldItalic.woff");
+  font-style:           italic;
+  font-weight:          bold;
+} */
+
+br { /* 2020-03-13 T 16:05: not yet fully effective. * /
+  line-height:          0;
+  font-size:            0;/**/
+}
+
+span.math, span.math span { /* Don't want to modify the display of tables. */
+  vertical-align:       middle;
+  position:             relative; /* 2020-03-14: Really usefull? */
+  display:              inline;
+}
+
+span.math {
+  text-align:           center;
+  font-family:          FreeSerif, hc-math, Times New Roman, serif;
+  font-size:            var(--math-init-font-size);
+  line-height:          1;
+}
+
+span.math span.math {
+  font-size:            inherit;
+}
+
+span.frac {
+  vertical-align:       middle;
+  text-align:           center;
+}
+
+span.frac-num, span.frac-den {
+  width:                100%; /* 2020-03-13: not sure if this always works. */
+}
+
+span.frac-num {
+  border-bottom:        solid 1pt;
+}
+
+span.radicand { /* The expression to evaluate the radical for. */
+  border-top:           solid 1pt;
+  padding:              0.1em 0.0em;
+}
+
+span.radical { /* The radical sign just before the expression. */
+}
+
+/* 2020-03-13: deco: desize content, enco: enlarge content. */
+
+/* decoration, superscript, subscript. */
+span.deco, sup, sub {
+  display:              inline;
+  font-size:            69%; /* rsqrt(2.1) */
+}
+
+span.enco { /* encompass. */
+  font-size:            144%; /* sqrt(2.1) */
+}
+
+span.enco2 { /* encompass twice. */
+  font-size:            210%;
+  padding:              0.2ex 0.0ex;
+}
+
+span.deco, span.enco {
+  vertical-align:       middle;
+}
+
+span.aleft {
+  text-align:   left;
+}
+
+span.aright {
+  text-align:   right;
+}
+
+table.matrix {
+  border-spacing:       6pt;
+}
+
+div.p { /* HTML5 doesn't seem to like nesting table in paragraphs. */
+  margin:       1.12em 0;
+}
+</style>
+<style>@media print
+{
+  @page:right
+  {
+    @bottom-right {
+      content:  counter(page);
+    }
+  }
+
+  @page:left
+  {
+    @bottom-left {
+      content:  counter(page);
+    }
+  }
+
+  @page {
+    @top-center {
+      content:  string(booktitle);
+    }
+
+    @bottom-center {
+      content:  string(ch1);
+    }
+  }
+
+  div.booktitle {
+    string-set: booktitle content();
+  }
+
+  h1 {
+    string-set: ch1 content();
+  }
+
+  /* -- begin: paragraph numbering -- * /
+
+  body > p, main > p {
+    counter-increment:  paragraph-cnt;
+    position:           relative;
+  }
+
+  body > p::before, main > p::before {
+    content:    counter(paragraph-cnt);
+    text-align: right;
+    display:    block;
+    position:   absolute;
+    left:       -12mm;
+    width:      10mm;
+    height:     100%;
+  }
+
+  / * -- end: paragraph numbering -- */
+}
+</style>
+<style>div.booktitle {
+  text-align:   center;
+  margin:       3pc 2pc;
+  font-size:    185%;
+  font-weight:  bold;
+}
+
+div.abstract {
+  margin:       0% 15%;
+}
+
+div.toc-list-head {
+  font-weight:  bold;
+  font-family:  serif;
+  font-size:    125%;
+}
+
+ol.toc-list {
+  list-style:   none;
+}
+
+*[data-a-prefix]::before {
+  content:      attr(data-a-prefix) " ";
+}
+
+@media print
+{
+  ol.toc-list a {
+    display:            inline-block;
+    width:              87%;
+    position:           relative;
+    text-decoration:    none;
+  }
+
+  ol.toc-list a[data-toc-level=h1] {
+    border-bottom:      dotted;
+  }
+
+  ol.toc-list a[data-toc-level=h1]::after {
+    /* There is currently no ``leader()'' support in WeasyPrint. */
+    position:   absolute;
+    right:      0;
+    content:    target-counter(attr(href url), page);
+  }
+
+  div.pagebreak {
+    break-after:        always;
+  }
+}
+
+nav.navbar-multipage {
+  margin:       3mm 0mm;
+  padding:      3mm 2mm;
+  border:       solid 1pt gray;
+  box-shadow:   1mm 1mm 2mm rgba(0,0,0,0.2);
+}
+</style>
+<style>figure.algorithm {
+  padding:              0pc 1pc;
+  border-top:           solid medium black;
+  border-bottom:        solid medium black;
+}
+
+figure.algorithm figcaption {
+  text-align:           center;
+  border-bottom:        solid thin black;
+}
+
+table.default {
+  position:             relative;
+  left:                 20%;
+  width:                60%;
+  border:               solid thin black;
+  border-collapse:      collapse;
+}
+
+table.default caption {
+  border:               solid thin black;
+}
+
+table.default th,
+table.default td {
+  border:               solid thin black;
+}
+
+table.numerical td {
+  text-align:           center;
+}
+</style>
+    <title>Xifrat - Compact Public-Key Cryptosystems based on Quasigroups</title>
+  </head>
+  <body>
+
+<div class=booktitle>Xifrat - Compact Public-Key Cryptosystems based on Quasigroups</div>
+
+<style>
+ div.abstract {
+   text-align:   justify;
+ }
+
+ div#authors {
+   text-align:   center;
+ }
+</style>
+
+<div class=abstract>
+  <p>
+    This paper proposes a new public-key cryptosystem based on
+    a quasigroup with the special property of "restricted-commutativity".
+    We argue its security empirically and present constructions for
+    key exchange and digital signature. To the best of our knowledge,
+    our primitive and construction have no known polynomial-time attack
+    from quantum computers yet.
+  </p>
+
+  <p>
+    The proposed cryptosystem along with the reference implementation
+    are released to the public domain.
+  </p>
+</div>
+
+<div id="authors">
+  Authors: <br/>
+  Daniel Nager (daniel.nager {at} gmail {dot} com), <br/>
+  "Danny" Niu Jianfang (dannyniu {at} hotmail {dot} com)
+</div>
+
+<p><small>
+  <b>!NOTE!</b> The HTML rendering of this document is not authoritative,
+  and readers seeking a stable reference should look for the PDF version
+  published at official sources.
+</small></p>
+
+<div class=pagebreak></div>
+
+
+<div class=toc-list-head>Table of Contents</div>
+
+<ol class=toc-list>
+<li><a  data-toc-level="h1" href='#h1-1-2473e'>1. Introduction</a></li>
+<li><a  data-toc-level="h1" href='#h1-2-78ab2'>2. Xifrat Elements - The Quasigroup</a></li>
+<li><a   href='#h2-2-1-0f730'>2.1. How did we choose such quasigroup</a></li>
+<li><a   href='#h2-2-2-c7456'>2.2. Miscellaneous information about the quasigroup</a></li>
+<li><a  data-toc-level="h1" href='#h1-3-e6769'>3. Xifrat Primitive - The Mixing Function</a></li>
+<li><a   href='#h2-3-1-f7939'>3.1. The Construction and Instantiation of the Mixing Function</a></li>
+<li><a   href='#h2-3-2-34206'>3.2. The Arguments for Security</a></li>
+<li><a   href='#h2-3-3-d7b6f'>3.3. Proof of Correctness</a></li>
+<li><a  data-toc-level="h1" href='#h1-4-7e828'>4. Xifrat Schemes</a></li>
+<li><a   href='#h2-4-1-54f63'>4.1. Xifrat-Kex the Key Exchange</a></li>
+<li><a   href='#h2-4-2-1c760'>4.2. Xifrat-Sign the Digital Signature Algorithm</a></li>
+<li><a  data-toc-level="h1" href='#h1-A-5d20d'>Annex A. References</a></li>
+</ol>
+
+<div class=toc-list-head>Figures</div>
+
+<ol class=toc-list>
+<li><a   href='#figure-2-1-40df9'>Figure 2.1. Quasigroup Search Program</a></li>
+<li><a   href='#figure-3-1-fcbf1'>Figure 3.1. Algorithm for <span class="math"><var>m</var>(<var>r</var>,<var>k</var>)</span></a></li>
+<li><a   href='#figure-3-2-e49c0'>Figure 3.2. Algorithm for <span class="math"><var>generator</var>(<var>x</var>)</span></a></li>
+<li><a   href='#figure-4-1-529b0'>Figure 4.1. The Xifrat-Kex Key Exchange Protocol</a></li>
+<li><a   href='#figure-4-2-298e0'>Figure 4.2. Xifrat-Sign Key Generation</a></li>
+<li><a   href='#figure-4-3-813f1'>Figure 4.3. Xifrat-Sign Signature Generation</a></li>
+<li><a   href='#figure-4-4-8771e'>Figure 4.4. Xifrat-Sign Signature Verification</a></li>
+</ol>
+
+<div class=pagebreak></div>
+
+
+
+<h1 id='h1-1-2473e' data-a-prefix='1.'>Introduction</h1>
+
+
+<p>
+  Public-key cryptography is a branch of modern cryptography that studies
+  the protection of secrecy and authenticity in an open and public environment.
+  Two most important functionalities of public-key cryptography are
+  digital signature (authenticity) and public-key encryption and (its functional
+  equivalent) key exchange (secrecy).
+</p>
+
+<p>Two most prominent development occurred
+  in the 1970s -
+  the Diffie-Hellman key exchange <a  href='#namedanchor-ref-dh-1976'>[DH76]</a>, and
+  the RSA cryptosystem <a  href='#namedanchor-ref-rsa-1978'>[RSA78]</a>,
+  with current cryptanalysis showing that at least 2048-bit parameters are
+  required for 112-bit security level due to the
+  "General Number Field Sieving" algorithm
+  <a  href='#namedanchor-ref-ll-gnfs-1993'>[LL93]</a>.
+  The most prominent industry standard for RSA is
+  <a  href='#namedanchor-link-pkcs-1'>[PKCS#1]</a>.
+</p>
+
+<p>
+  The most compact public-key cryptosystems known today are based on
+  the elliptic-curve discrete logarithm problem, with current cryptanalysis
+  showing that only 256-bit parameters are needed for 128-bit security level
+  due to Pollard's rho algorithm for discrete logarithm
+  <a  href='#namedanchor-ref-pollard-1978'>[Po78]</a>.
+  The most prominent industry standard for elliptic-curve cryptography
+  would be <a  href='#namedanchor-link-sec-1'>[SEC#1]</a>.
+</p>
+
+<p>
+  The search for compact public-key cryptosystem would have stopped when
+  Berstein et al. introduced Curve25519 for key exchange and Ed25519 for
+  digital signature
+  <a  href='#namedanchor-ref-25519-2005'>[Curve25519]</a>  <a  href='#namedanchor-ref-25519-2011'>[EdDSA]</a>,
+  which offered the best-in-class efficiency, performance, and
+  logical and practical security (that is, both mathematically correct and
+  easy to implement correctly and free of side channels), if wasn't for
+  there're polynomial-time <em>quantum computer</em> algorithms for
+  integer factorization and discrete logarithm
+  <a  href='#namedanchor-ref-shor-1995'>[Shor95]</a>.
+</p>
+
+<p>
+  For the list of finalist and alternate candidates in
+  the 3rd round of the NIST Post-Quantum Cryptography project
+  <a  href='#namedanchor-link-nist-pqc'>[NIST-PQC]</a>,
+  ones with one compact cryptogram usually have another one that's very huge
+  (compact public key for SPHINCS+ with huge signature, compact signature
+  for Rainbow with huge public key), some with solid security records may
+  have large cryptograms with no compact one at all (Classic McEliece).
+  For the ones with overall acceptable cryptogram sizes (Dilithium, Falcon,
+  Kyber, NTRU, Saber), those sizes are still larger than that of RSA by
+  a factor of a single decimal digit, and larger than that of elliptic curve
+  by an order of magnitude.
+</p>
+
+<p>
+  In this paper, we propose 2 compact cryptosystems - 1 for key exchange and
+  1 for digital signature - both based on a quasigroup with the
+  special property of "restricted-commutativity". Although cryptosystems
+  based on quasigroups had been proposed <a  href='#namedanchor-ref-mqq'>[GMK08]</a>  and broken <a  href='#namedanchor-ref-mqq-break'>[FOPG10]</a> before, our construction is
+  completely different from theirs. While we cannot disprove the existence
+  of efficient algorithm that break our cryptosystems, we present empirical
+  arguments for the security of our cryptosystems. 
+</p>
+
+<p>
+  The proposed cryptosystem along with the reference implementation
+  are released to the public domain.
+</p>
+
+
+<h1 id='h1-2-78ab2' data-a-prefix='2.'>Xifrat Elements - The Quasigroup</h1>
+
+
+<p>
+  The core element of Xifrat cryptosystem is a quasigroup of 8 elements.
+  We represent the binary operation of this group as
+  <span class="math">
+    <var>f</var> : &integers;<sub>8</sub> &times; &integers;<sub>8</sub>&rightarrow; &integers;<sub>8</sub>  </span>.
+  This group has the following properties:
+</p>
+
+<ul>
+  <li>Non-Associative <em>In General</em>:
+    that is, for most cases,
+    <span class="math">
+      <var>f</var>(<var>f</var>(<var>a</var>,<var>b</var>),<var>c</var>) &ne; <var>f</var>(<var>a</var>,<var>f</var>(<var>b</var>,<var>c</var>))    </span>
+  </li>
+
+  <li>Non-Commutative <em>In General</em>:
+    that is, for most cases,
+    <span class="math">
+      <var>f</var>(<var>a</var>,<var>b</var>) &ne; <var>f</var>(<var>b</var>,<var>a</var>)    </span>
+  </li>
+
+  <li>Restricted-Commutativity:
+    that is, for all cases,
+    <span class="math">
+      <var>f</var>(<var>f</var>(<var>a</var>,<var>b</var>),<var>f</var>(<var>c</var>,<var>d</var>)) = <var>f</var>(<var>f</var>(<var>a</var>,<var>c</var>),<var>f</var>(<var>b</var>,<var>d</var>))    </span>
+  </li>
+</ul>
+
+<p>
+  The table for the quasigroup is as follow:
+</p>
+
+<pre>
+  5   3   1   6   7   2   0   4
+  3   5   0   2   4   6   1   7
+  6   2   4   5   0   3   7   1
+  4   7   6   1   3   0   2   5
+  0   1   3   7   6   4   5   2
+  7   4   2   0   5   1   6   3
+  2   6   7   3   1   5   4   0
+  1   0   5   4   2   7   3   6
+</pre>
+
+<p>
+  The function <span class="math"><var>f</var>(<var>a</var>,<var>b</var>)</span> returns
+  the value of the cell at <span class="math"><var>a</var></span>'th
+  row and <span class="math"><var>b</var></span>'th column
+  (indices are 0-based).
+</p>
+
+
+<h2 id='h2-2-1-0f730' data-a-prefix='2.1.'>How did we choose such quasigroup</h2>
+
+
+<p>
+  The first part is "why 8"? Actually, we originally had one of 16 elements;
+  although it had all the desired property, its choice cannot be verified.
+  So we went for one that can be verified as random. When we run our program
+  to find a verifiably random quasigroup with 16 elements, it took so much
+  time that we concluded that it's beyond the patience of any potential
+  third-party verifiers, so we went for 8.
+</p>
+
+<p>
+  Second, we have a list of desired property of the quasigroup. In addition to
+  the arithmetic ones listed above, we have the following:
+</p>
+
+<ul>
+  <li>The quasigroup table should not have obvious symmetry;</li>
+  <li>The quasigroup table should not have any fixed points;</li>
+</ul>
+
+<p>
+  With these requirements in mind, we created a simple C program that
+  searched for candidate quasigroup tables.
+  The program ran the following steps:
+</p>
+
+
+<figure class="algorithm">
+  <figcaption><a id='figure-2-1-40df9' data-a-prefix='Figure 2.1.'>Quasigroup Search Program</a>
+</figcaption>
+  <ol>
+    <li>Create an array of shuffles as follow:
+      <ol>
+        <li>Seed an instance of SHAKE-256 XOF
+          <a  href='#namedanchor-link-fips-202'>[FIPS-202]</a>          function with the NUL-terminated ASCII string:
+          "<code>xifrat - public-key cryptosystem</code>"
+        </li>
+
+        <li>Create a list <span class="math"><var>U</var></span>
+          of shuffles one by one using the following steps:
+          <ol>
+            <li><code>[label-1]</code>: Read 8 octets from the XOF stream and
+              interpret it as a 64-bit little-endian unsigned integer.
+            </li>
+            <li>If the number is greater than
+              <span class="math">
+                floor( (2<sup>64</sup>-1) / 8! ) &middot; ( 8! )              </span>
+              then go to <code>[label-1]</code> and proceed from there again.
+            </li>
+            <li>Take the number modulo
+              <span class="math">8!</span>
+              and label it as (i.e., set it to)
+              <span class="math"><var>s</var></span>.
+            </li>
+
+            <li>Initialize the list <span class="math"><var>V</var></span>
+              to be shuffled as [0,1,2 ... 7].</li>
+            <li>For <span class="math"><var>i</var></span> in 8...2:
+              <ol>
+                <li><span class="math">
+                  <var>p</var> &leftarrow; <var>s</var> modulo <var>i</var>                </span></li>
+                <li><span class="math">
+                  <var>j</var> &leftarrow; 8 - <var>i</var>                </span></li>
+                <li>Swap
+                  <span class="math"><var>V</var><sub><var>p</var>+<var>j</var></sub></span> and
+                  <span class="math"><var>V</var><sub><var>j</var></sub></span>.
+                </li>
+                <li><span class="math">
+                  <var>s</var> &leftarrow; floor(<var>s</var> / <var>i</var>)                </span></li>
+              </ol>
+            </li>
+            <li>Append <span class="math"><var>V</var></span>
+              to <span class="math"><var>U</var></span>
+            </li>
+
+          </ol>
+        </li>
+      </ol>
+    </li>
+
+    <li>Walk diagonally from top-right to bottom-right starting
+      from the top-left corner to the bottom-right corner;
+      the cells traversed in such pattern are labelled 0...63, and
+      for each cell walked suchly:
+      <ol>
+        <li><code>[label-2]</code>: Set the value of the cell to
+          that of the lowest index in the shuffle such that
+          the constraints as set out and implied in the requirements
+          are not violated.
+        </li>
+        <li>Recursively set the next cell similarly:
+          <ol>
+            <li>If at some point constraints are violated,
+              try the next index in the shuffle; and if all indices
+              are tried out, recursively fix it by trying the next index
+              in the previous cells by reverting to <code>[label-2]</code>
+              . Until:
+            </li>
+            <li>
+              When all cells are set and no constraint is violated,
+              output the table and return [SUCCESS].
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</figure>
+
+<p>
+  The source code for the program can be found at our GitHub repository:
+  <a href="https://github.com/dannyniu/xifrat">https://github.com/dannyniu/xifrat</a>.
+</p>
+
+
+<h2 id='h2-2-2-c7456' data-a-prefix='2.2.'>Miscellaneous information about the quasigroup</h2>
+
+
+<p>
+  As we choose our quasigroup operation table in a verifiably random fashion,
+  we should indicate how random the choice was. Below is
+  "indices of freedom" of our quasigroup, laid in walking order from
+  left to right and top to bottom. The smaller the index indicates the more
+  free the choice of the cell value is; a value of 9 indicates that
+  the constraints from other cells had determined the value of that cell
+</p>
+
+<pre>
+  1   2   1   6   4   7   3   4
+  7   2   3   1   1   3   5   9
+  9   9   9   9   9   9   9   9
+  9   9   9   9   9   9   9   9
+  9   9   9   9   9   9   9   9
+  9   9   9   9   9   9   9   9
+  9   9   9   9   9   9   9   9
+  9   9   9   9   9   9   9   9
+</pre>
+
+<p>
+  Our program was originally written as a single-thread program. When
+  it's found that more efficiency was more desired, we parallelized it
+  with the <code>fork(2)</code> POSIX function, so that global states
+  can still be shared by every function in the code, and minimal
+  modification is needed.
+</p>
+
+
+<h1 id='h1-3-e6769' data-a-prefix='3.'>Xifrat Primitive - The Mixing Function</h1>
+
+
+<p>
+  The next building block in Xifrat, is the mixing function
+  <span class="math"><var>c</var> = <var>m</var>(<var>r</var>,<var>k</var>)</span>,
+  where <span class="math"><var>c</var>, <var>r</var>, <var>k</var></span> are "cryptograms"
+  of Xifrat. The function has the following property:
+</p>
+
+<ul>
+  <li>Restricted-Commutativity, as is the case with
+    <span class="math"><var>f</var>(<var>a</var>,<var>b</var>)</span>
+  </li>
+
+  <li>Resistance to Key-Recovery: that is, given any number of pairs of
+    <span class="math"><var>c</var></span> and
+    <span class="math"><var>r</var></span>, it should be
+    computationally infeasible to find
+    <span class="math"><var>k</var></span>.
+  </li>
+
+  <li>Resistance to Cryptogram Prediction: that is, given
+    <span class="math"><var>c</var>'</span> or
+    <span class="math"><var>r</var>'</span> (but not both), and
+    any number of such pair of cryptogram under a particular
+    <span class="math"><var>k</var></span>,
+    it should be computationally infeasible to find
+    <span class="math"><var>c</var>'</span> from
+    <span class="math"><var>r</var>'</span> and vice-versa.
+  </li>
+</ul>
+
+
+<h2 id='h2-3-1-f7939' data-a-prefix='3.1.'>The Construction and Instantiation of the Mixing Function</h2>
+
+
+<p>
+  The mixing function <span class="math"><var>m</var>()</span>
+  runs with 1 parameter: <span class="math"><var>N</var></span> - number of
+  scalar elements from <span class="math">&integers;<sub>8</sub></span>
+  in the cryptogram vector. The scalar elements indexed
+  <span class="math"><var>i</var></span> in a cryptogram
+  <span class="math"><var>p</var></span> is
+  <span class="math"><var>p</var><sub><var>i</var></sub><var></var></span>.
+</p>
+
+<figure class="algorithm">
+  <figcaption><a id='figure-3-1-fcbf1' data-a-prefix='Figure 3.1.'>Algorithm for <span class="math"><var>m</var>(<var>r</var>,<var>k</var>)</span></a>
+</figcaption>
+  <ol>
+    <li>For <span class="math"><var>i</var></span> in [0...N-1]: <br/>
+      <span class="math">
+        <var>r</var><sub><var>i</var></sub><var></var> &leftarrow; <var>f</var>(<var>r</var><sub><var>i</var></sub><var></var> , <var>k</var><sub><var>i</var></sub><var></var>)      </span>
+      <small> // initial mixing of cryptograms
+        <span class="math"><var>r</var></span> with
+        <span class="math"><var>k</var></span>
+      </small>
+    </li>
+
+    <li>Given
+      <span class="math">
+        <var>U</var> &leftarrow; list(generator(<var>N</var>&middot;<var>N</var>+1))      </span>,
+      for <span class="math"><var>i</var></span> in [0...N&middot;N]: <br/>
+      <span class="math">
+        <var>r</var><sub><var>i</var></sub><var></var> &leftarrow; <var>f</var>(<var>r</var><sub><var>U</var><sub><var>i</var></sub><var></var></sub> , <var>r</var><sub><var>U</var><sub><var>i</var>+1</sub></sub>)      </span>
+      <small> // mixing of
+        <span class="math"><var>r</var></span> with itself in
+        random sequence to block certain types of
+        divide-and-conquer attack.
+      </small>
+    </li>
+
+    <li>For <span class="math"><var>i</var></span> in [0...N-1]: <br/>
+      <span class="math">
+        <var>r</var><sub><var>i</var></sub><var></var> &leftarrow; <var>f</var>(<var>r</var><sub><var>i</var></sub><var></var> , <var>k</var><sub><var>i</var></sub><var></var>)      </span>
+      <small> // final mixing of cryptograms
+        <span class="math"><var>r</var></span> with
+        <span class="math"><var>k</var></span>
+      </small>
+    </li>
+  </ol>
+</figure>
+
+<p>
+  In the above algorithm, the <span class="math">list()</span> function
+  takes the outputs of an iterator and assembles them in to an ordered list.
+  The function <span class="math">generator()</span> is defined as follow:
+</p>
+
+<figure class="algorithm">
+  <figcaption><a id='figure-3-2-e49c0' data-a-prefix='Figure 3.2.'>Algorithm for <span class="math"><var>generator</var>(<var>x</var>)</span></a>
+</figcaption>
+  <ol>
+    <li>Create a list <span class="math">
+      <var>U</var> &leftarrow; list( 7*(3&middot;<var>i</var> + 5)<sup>17</sup> + 11 mod <var>N</var> for <var>i</var> in [0...<var>N</var>-1] )    </span></li>
+    <li>For <span class="math"><var>i</var></span> in [0...x-1]:
+      <ol>
+        <li>yield <span class="math"><var>U</var><sub><var>i</var> mod <var>N</var></sub></span></li>
+
+        <li>If <span class="math">
+          (<var>N</var> - <var>i</var> mod <var>N</var>) = 1 </span>:
+          <ol>
+            <li>Copy
+              <span class="math"><var>U</var></span> to
+              <span class="math"><var>V</var></span>.
+            </li>
+
+            <li>
+              <span class="math">
+                <var>U</var><sub><var>j</var></sub><var></var> &leftarrow; <var>V</var><sub><var>U</var><sub><var>j</var></sub><var></var></sub> for <var>j</var> in [0...<var>N</var>]              </span>
+            </li>
+          </ol>
+        </li>
+
+        <li><span class="math"><var>i</var> = <var>i</var>+1</span></li>
+      </ol>
+    </li>
+    <li>Return [END].</li>
+  </ol>
+</figure>
+
+<p>
+  For ease of implementation, we choose a single parameter
+  <span class="math"><var>N</var> = 131</span>, resulting in
+  a cryptogram size of 393 bits (rounded up to 50 octets), targeting
+  192-bit overall security. <span class="math"><var>N</var></span> is
+  chosen to be a prime so that it's easy to build a random sequence
+  generator that consumes few working memory.
+</p>
+
+<p>
+  As a cryptanalysis challenge proposed for the purpose of helping
+  understand the properties of Xifrat cryptosystem better, we propose
+  a toy parameter set <span class="math"><var>N</var></span> of 23
+  targeting 32-bit security.
+</p>
+
+
+<h2 id='h2-3-2-34206' data-a-prefix='3.2.'>The Arguments for Security</h2>
+
+
+<p>
+  To argue for the security of <span class="math"><var>m</var>()</span>,
+  we observe that the middle loop of the mixing function is actually
+  <span class="math"><var>N</var></span> rounds of application of
+  Feistel network, with each <b>2 rounds</b> consisting of mixing of
+  <span class="math"><var>N</var></span> tritets with each other
+  permuted by the <span class="math"><var>f</var>()</span> function.
+  Unlike regular Feistel network where operands are mixed sequentially,
+  we randomized the order of mixing in order to deter potential
+  'divide-and-conquer' attacks.
+</p>
+
+<p>
+  Algebraically, each 8 values of the tritet needs to be represented as
+  64 &times; 64 sparse matrix - two 8 &times; 8 ones nested together, as
+  an inner one and an outer one that receives operands differently
+  depending on whether the operand is applied on the left or right.
+  In other words, the arithmetic value of the matrix depends on
+  whether it's used as row or column index when looking up in the sbox.
+</p>
+
+<p>
+  Next, each tritet output from the mixing function
+  <span class="math"><var>m</var>()</span> is the product of appying
+  <span class="math">2<var>N</var></span> tritets - the
+  <span class="math"><var>r</var></span> and
+  <span class="math"><var>k</var></span> , where
+  <span class="math"><var>N</var></span> is 131.
+  We <em>roughly</em> estimate that potential algebraic attacks would
+  either have to operate at very high degree, or produce large set of
+  linear relationships with too many derived linearized variables
+  to be practical.
+</p>
+
+
+<h2 id='h2-3-3-d7b6f' data-a-prefix='3.3.'>Proof of Correctness</h2>
+
+
+<style>
+ span.
+</style>
+
+<p>
+  To prove the correctness of "restricted-commutativity" of the
+  <span class="math"><var>m</var>()</span> function, we'll first need
+  a few propositions.
+</p>
+
+<p>
+  <b>Notation 1.</b> We simplify, both
+  entry-wise application of scalar elements of cryptogram vectors,
+  and direct application on tritet operands,
+  <span class="math"><var>f</var>(<var>a</var>,<var>b</var>)</span> as
+  <span class="math"><var>ab</var></span> , and
+  <span class="math"><var>f</var>(<var>f</var>(...(<var>a</var>,<var>b</var>),<var>c</var>...))</span> as
+  <span class="math"><var>abc</var>...</span> ;
+
+    for a function
+  <span class="math"><var>e</var>()</span> defined later, we denote
+  <span class="math"><var>e</var>(<var>a</var>)</span> as
+  <span class="math"><var>a</var>'</span> .
+</p>
+
+<p>
+  <b>Prop 1.</b> <em>Left-associativity of distributiveness</em>
+</p>
+
+<p>
+  That is:
+  <span class="math">
+    (<var>a</var><sub>1</sub> <var>b</var><sub>1</sub>)(<var>a</var><sub>2</sub> <var>b</var><sub>2</sub>) ... (<var>a</var><sub><var>n</var></sub><var></var> <var>b</var><sub><var>n</var></sub><var></var>) = (<var>a</var><sub>1</sub> <var>a</var><sub>2</sub> ... <var>a</var><sub><var>n</var></sub><var></var>)(<var>b</var><sub>1</sub> <var>b</var><sub>2</sub> ... <var>b</var><sub><var>n</var></sub><var></var>)  </span>
+</p>
+
+<p>
+  <b>Proof</b>: <br/>
+  observe a case of 3 pairs:
+  <span class="math">
+    (<var>ab</var>)(<var>cd</var>)(<var>ef</var>)  </span> .<br/>
+  due to restricted commutativity:
+  <span class="math">
+    (<var>ac</var>)(<var>bd</var>)(<var>ef</var>)  </span> ,<br/>
+  next, substitute
+  <span class="math">
+    <var>g</var>=(<var>ac</var>) , <var>h</var> = (<var>bd</var>)  </span> , we have:<br/>
+  <span class="math">
+    (<var>gh</var>)(<var>ef</var>)  </span> ,<br/>
+  again, due to restricted-commutativity, we have:
+  <span class="math">
+    (<var>ge</var>)(<var>hf</var>)  </span> ,<br/> substitute back, we have:
+  <span class="math">
+    (<var>ace</var>)(<var>bdf</var>)  </span> ,<br/> generalizing recursively, we have <b>Prop 1.</b>
+</p>
+
+<p>
+  <b>Definition 1.</b>
+  <em>
+    <span class="math"><var>e</var>(<var>a</var>)</span>
+    applies the middle loop (step 2) of the algorithm for
+    <span class="math"><var>m</var>(<var>r</var>,<var>k</var>)</span> to
+    <span class="math"><var>a</var></span> ; and per
+    <b>Notation 1.</b> results in
+    <span class="math"><var>a</var>'</span> .
+  </em>
+</p>
+
+<p>
+  <b>Prop 2.</b> <span class="math"><var>e</var>(<var>ab</var>)=<var>e</var>(<var>a</var>)<var>e</var>(<var>b</var>)</span>
+</p>
+
+<p>
+  <b>Proof</b>:
+  Due to the structure of the middle loop of
+  <span class="math"><var>m</var>()</span>, this is apparent by applying
+  <b>Prop 1.</b>
+</p>
+
+<p>
+  <b>Prop 3.</b>
+  <span class="math">
+    (<var>a</var><sub>1</sub> <var>a</var><sub>2</sub> <var>a</var><sub>3</sub>)(<var>b</var><sub>1</sub> <var>b</var><sub>2</sub> <var>b</var><sub>3</sub>)(<var>c</var><sub>1</sub> <var>c</var><sub>2</sub> <var>c</var><sub>3</sub>) = (<var>a</var><sub>1</sub> <var>b</var><sub>1</sub> <var>c</var><sub>1</sub>)(<var>a</var><sub>2</sub> <var>b</var><sub>2</sub> <var>c</var><sub>2</sub>)(<var>a</var><sub>3</sub> <var>b</var><sub>3</sub> <var>c</var><sub>3</sub>)  </span>
+</p>
+
+<p>
+  <b>Proof</b>:
+  From the left side of the equation, by <b>Prop 1.</b>, we have
+</p>
+
+<p><span class="math">
+  (<var>a</var><sub>1</sub> <var>a</var><sub>2</sub> <var>a</var><sub>3</sub>)(<var>b</var><sub>1</sub> <var>b</var><sub>2</sub> <var>b</var><sub>3</sub>)(<var>c</var><sub>1</sub> <var>c</var><sub>2</sub> <var>c</var><sub>3</sub>) =</span></p>
+<p><span class="math">
+  ( (<var>a</var><sub>1</sub> <var>b</var><sub>1</sub>)(<var>a</var><sub>2</sub> <var>b</var><sub>2</sub>)(<var>a</var><sub>3</sub> <var>b</var><sub>3</sub>) ) (<var>c</var><sub>1</sub> <var>c</var><sub>2</sub> <var>c</var><sub>3</sub>) =</span></p>
+<p><span class="math">
+  ((<var>a</var><sub>1</sub> <var>b</var><sub>1</sub>)<var>c</var><sub>1</sub>) ((<var>a</var><sub>2</sub> <var>b</var><sub>2</sub>)<var>c</var><sub>2</sub>) ((<var>a</var><sub>3</sub> <var>b</var><sub>3</sub>)<var>c</var><sub>3</sub>) =</span></p>
+<p><span class="math">
+  (<var>a</var><sub>1</sub> <var>b</var><sub>1</sub> <var>c</var><sub>1</sub>)(<var>a</var><sub>2</sub> <var>b</var><sub>2</sub> <var>c</var><sub>2</sub>)(<var>a</var><sub>3</sub> <var>b</var><sub>3</sub> <var>c</var><sub>3</sub>)</span></p>
+
+<p>
+  <b>Main Proposition</b>
+  <span class="math">(<var>ab</var>)(<var>cd</var>) = (<var>ac</var>)(<var>bd</var>)</span>
+</p>
+
+<p>
+  <b>Proof</b>:
+  observe that the <span class="math"><var>m</var>(a,b)</span> function can be
+  represented using <span class="math"><var>e</var>(<var>x</var>)</span> as:
+  <span class="math"><var>e</var>(<var>ab</var>)<var>b</var></span> , we first rewrite
+  the left side of the equation as:
+</p>
+
+<p><span class="math">
+  (<var>ab</var>)(<var>cd</var>) = (<var>e</var>(<var>ab</var>)<var>b</var>) (<var>e</var>(<var>cd</var>)<var>d</var>) = </span></p>
+<p><span class="math">
+  (<var>e</var>(<var>a</var>)<var>e</var>(<var>b</var>)<var>b</var>) (<var>e</var>(<var>c</var>)<var>e</var>(<var>d</var>)<var>d</var>) = </span></p>
+<p><span class="math">
+  (<var>a</var>' <var>b</var>' <var>b</var>) (<var>c</var>' <var>d</var>' <var>d</var>) = </span></p>
+<p><span class="math">
+  <var>e</var>(<var>a</var>' <var>b</var>' <var>b</var>) <var>e</var>(<var>c</var>' <var>d</var>' <var>d</var>) (<var>c</var>' <var>d</var>' <var>d</var>) =</span></p>
+<p><span class="math">
+  (<var>a</var>'' <var>b</var>'' <var>b</var>') (<var>c</var>'' <var>d</var>'' <var>d</var>') (<var>c</var>' <var>d</var>' <var>d</var>) =</span></p>
+
+<p>Likewise for the right side</p>
+
+<p><span class="math">
+  (<var>ac</var>)(<var>bd</var>) =</span></p>
+<p><span class="math">
+  (<var>a</var>'' <var>c</var>'' <var>c</var>') (<var>b</var>'' <var>d</var>'' <var>d</var>') (<var>b</var>' <var>d</var>' <var>d</var>) =</span></p>
+
+<p>
+  By <b>Prop 3.</b>, the two expressions are equal.
+</p>
+
+
+<h1 id='h1-4-7e828' data-a-prefix='4.'>Xifrat Schemes</h1>
+
+
+<p>
+  For readability purposes, we inherit at here, the notations
+  used in the previous section.
+</p>
+
+
+<h2 id='h2-4-1-54f63' data-a-prefix='4.1.'>Xifrat-Kex the Key Exchange</h2>
+
+
+<p>
+  Xifrat-Kex is a bi-party key exchange scheme similar to Diffie-Hellman
+  <a  href='#namedanchor-ref-dh-1976'>[DH76]</a>. Unlike recent lattice-based
+  key encapsulation mechanisms or public-key encryption algorithms,
+  Xifrat-Kex is "participant-symmetric" and has no "decryption failure".
+</p>
+
+<figure class="algorithm">
+  <figcaption><a id='figure-4-1-529b0' data-a-prefix='Figure 4.1.'>The Xifrat-Kex Key Exchange Protocol</a>
+</figcaption>
+  <ol>
+    
+    <li>
+      Agree on a public cryptogram
+      <span class="math"><var>C</var></span>
+      with the peer.
+    </li>
+
+    <li>
+      Generate a private key
+      <span class="math"><var>K</var><sub><var>private</var></sub></span>, and send
+      <span class="math"><var>K</var><sub><var>self</var></sub> = (<var>CK</var><sub><var>private</var></sub>)</span>
+      to the peer.
+    </li>
+
+    <li>
+      Receive the key share of the peer
+      <span class="math"><var>K</var><sub><var>peer</var></sub></span>, and compute
+      <span class="math">
+        <var>K</var><sub><var>shared</var></sub> = <var>K</var><sub><var>peer</var></sub>(<var>K</var><sub><var>private</var></sub><var>C</var>)      </span>.
+    </li>
+    
+  </ol>
+</figure>
+
+<p>
+  <b>Correctness</b>: Suppose the private keys for oneself is K and
+  for the peer is Q, the correctness of the key exchange is apparent from
+  the restricted-commutativity property; the key exchange can be re-written as:
+  <span class="math">(<var>CK</var>)(<var>QC</var>) = (<var>CQ</var>)(<var>KC</var>) = <var>K</var><sub><var>shared</var></sub></span>
+</p>
+
+
+<h2 id='h2-4-2-1c760' data-a-prefix='4.2.'>Xifrat-Sign the Digital Signature Algorithm</h2>
+
+
+<p>
+  Xifrat-Sign is a digital signature scheme consisting of 3 algorithms for
+  key-pair generation, signature generation, and verfication.
+  Xifrat-Sign uses a hash function, which is instantiated with the XOF
+  SHAKE-256 by taking its first 384 bits of output.
+</p>
+
+<figure class="algorithm">
+  <figcaption><a id='figure-4-2-298e0' data-a-prefix='Figure 4.2.'>Xifrat-Sign Key Generation</a>
+</figcaption>
+  <ol>
+
+    <li>Generate 3 cryptograms:
+      <span class="math"><var>C</var></span>,
+      <span class="math"><var>K</var></span>, and
+      <span class="math"><var>Q</var></span>.
+    </li>
+
+    <li>Compute
+      <span class="math"><var>P</var><sub>1</sub> = (<var>CK</var>)</span>,
+      <span class="math"><var>P</var><sub>2</sub> = (<var>KQ</var>)</span>,
+    </li>
+
+    <li>
+      Return public-key
+      <span class="math"><var>pk</var> = (<var>C</var>, <var>P</var><sub>1</sub>, <var>P</var><sub>2</sub>)</span>,
+      and private-key
+      <span class="math"><var>sk</var> = (<var>C</var>, <var>K</var>, <var>Q</var>)</span>,
+    </li>
+    
+  </ol>
+</figure>
+
+<figure class="algorithm">
+  <figcaption><a id='figure-4-3-813f1' data-a-prefix='Figure 4.3.'>Xifrat-Sign Signature Generation</a>
+</figcaption>
+  <ol>
+
+    <li><b>Input:</b>
+      <span class="math"><var>m</var></span> - the message
+    </li>
+
+    <li>Compute
+      <span class="math">SHAKE256<sub>384</sub>(<var>m</var>)</span> ,
+      and zero-extend the output to the size of Xifrat cryptogram,
+      and obtain the result as <span class="math"><var>H</var></span> .
+    </li>
+
+    <li>Compute
+      <span class="math"><var>S</var> = (<var>HQ</var>)</span>
+    </li>
+    
+    <li>Return <span class="math"><var>S</var></span></li>
+    
+  </ol>
+</figure>
+
+<figure class="algorithm">
+  <figcaption><a id='figure-4-4-8771e' data-a-prefix='Figure 4.4.'>Xifrat-Sign Signature Verification</a>
+</figcaption>
+  <ol>
+
+    <li><b>Input:</b>
+      <span class="math"><var>m</var></span> - the message ,
+      <span class="math"><var>S</var></span> - the signature
+    </li>
+
+    <li>Compute
+      <span class="math">SHAKE256<sub>384</sub>(<var>m</var>)</span> ,
+      and zero-extend the output to the size of Xifrat cryptogram,
+      and obtain the result as <span class="math"><var>H</var></span> .
+    </li>
+
+    <li>Compute
+      <span class="math">
+        <var>T</var><sub>1</sub> = <var>P</var><sub>1</sub> <var>S</var>      </span>
+    </li>
+
+    <li>Compute
+      <span class="math">
+        <var>T</var><sub>2</sub> = (<var>CH</var>)<var>P</var><sub>2</sub>      </span>
+    </li>
+
+    <li>
+      If <span class="math"><var>T</var><sub>1</sub> = <var>T</var><sub>2</sub></span>, 
+      return [VALID] ; otherwise, return [INVALID] .
+    </li>
+
+  </ol>
+</figure>
+
+<p>
+  <b>Correctness</b>: the formula for two verification transcripts:
+  <span class="math">
+    <var>T</var><sub>1</sub> = <var>P</var><sub>1</sub> <var>S</var> = (<var>CK</var>)(<var>HQ</var>)  </span>
+  and
+  <span class="math">
+    <var>T</var><sub>2</sub> = (<var>CH</var>) <var>P</var><sub>2</sub> = (<var>CH</var>)(<var>KQ</var>)  </span> ,
+  by restricted commutativity,
+  <span class="math"><var>T</var><sub>1</sub> = <var>T</var><sub>2</sub></span>
+</p>
+
+
+<h1 id='h1-A-5d20d' data-a-prefix='Annex A.'>References</h1>
+
+
+<style>
+ ul#references li {
+   margin:   2mm 0mm;
+ }
+</style>
+
+<ul id="references">
+  <li>
+    <a id='namedanchor-ref-25519-2005'>[Curve25519]</a> D.J.Bernstein,
+    <i>Curve25519: new Diffie-Hellman speed records</i>
+    <a href="https://cr.yp.to/papers.html#curve25519">https://cr.yp.to/papers.html#curve25519</a>  </li>
+
+  <li>
+    <a id='namedanchor-ref-dh-1976'>[DH76]</a> W.Diffie, M.E.Hellman,
+    <i>New Directions in Cryptography</i>.
+    1976 IEEE Transactions on Information Theory;
+    Volume: 22, Issue 6, pp 644-654;
+    <a href="https://doi.org/10.1109/TIT.1976.1055638">https://doi.org/10.1109/TIT.1976.1055638</a>  </li>
+
+  <li>
+    <a id='namedanchor-ref-25519-2011'>[EdDSA]</a>    D.J.Bernstein, N.Duif, T.Lange, P.Schwabe, B.Yang
+    <i>High-speed high-security signatures</i>
+    <a href="https://cr.yp.to/papers.html#ed25519">https://cr.yp.to/papers.html#ed25519</a>  </li>
+
+  <li>
+    <a id='namedanchor-ref-mqq-break'>[FOPG10]</a>    J.Faug&egrave;re, R.S.&Oslash;deg&aring;rd, L.Perret, D.Gligoroski,
+    <i>Analysis of the MQQ Public Key Cryptosystem</i>
+    2021 Cryptology and Network Security;
+    Volume: 6467, pp169-183;
+    <a href="https://doi.org/10.1007/978-3-642-17619-7_13">https://doi.org/10.1007/978-3-642-17619-7_13</a>  </li>
+
+  <li>
+    <a id='namedanchor-ref-mqq'>[GMK08]</a>    D.Gligoroski, S.Markovski, S.J.Knapskog,
+    <i>Public Key Block Cipher Based on Multivariate Quadratic Quasigroups</i>
+    <a href="https://eprint.iacr.org/2008/320">https://eprint.iacr.org/2008/320</a>  </li>
+  
+  <li>
+    <a id='namedanchor-ref-ll-gnfs-1993'>[LL93]</a> A.K.Lenstra, H.W.Lenstra,
+    <i>The Development of the Number Field Sieve</i>.
+    Lecture Notes in Mathematics, vol. 1554, Berlin, Springer-Verlag, 1993.
+  </li>
+
+  <li>
+    <a id='namedanchor-ref-pollard-1978'>[Po78]</a> J.M.Pollard,
+    <i>Monte Carlo methods for index computation (mod p)</i>.
+    Mathematics of Computations;
+    Volume: 32, Issue 143, pp 918-924;
+    <a href="https://doi.org/10.1090/S0025-5718-1978-0491431-9">https://doi.org/10.1090/S0025-5718-1978-0491431-9</a>  </li>
+
+  <li>
+    <a id='namedanchor-ref-rsa-1978'>[RSA78]</a> R.L.Rivest, A.Shamir, L.Adleman,
+    <i>A method for obtaining digital signatures and
+      public-key cryptosystems</i>.
+    1978 Communications of The ACM;
+    Volume: 21, Issue: 2, pp 120-126;
+    <a href="https://doi.org/10.1145/357980.358017">https://doi.org/10.1145/357980.358017</a>  </li>
+
+  <li>
+    <a id='namedanchor-ref-shor-1995'>[Shor95]</a> P.Shor,
+    <i>Polynomial-Time Algorithms for Prime Factorization and
+      Discrete Logarithms on a Quantum Computer</i>.
+    1995 arXiv: Quantum Physics;
+    <a href="https://doi.org/10.1137/S0097539795293172">https://doi.org/10.1137/S0097539795293172</a>  </li>
+
+  <li>
+    <a id='namedanchor-link-fips-202'>[FIPS-202]</a> NIST FIPS-202 <i>SHA-3 Standard:
+    Permutation-Based Hash and Extendable-Output Functions</i> ;
+    <a href="http://dx.doi.org/10.6028/NIST.FIPS.202">http://dx.doi.org/10.6028/NIST.FIPS.202</a>  </li>
+
+  <li>
+    <a id='namedanchor-link-nist-pqc'>[NIST-PQC]</a>    Post-Quantum Cryptography, Round 3 Submissions.
+    <a href="https://csrc.nist.gov/Projects/post-quantum-cryptography/round-3-submissions">https://csrc.nist.gov/Projects/post-quantum-cryptography/round-3-submissions</a>  </li>
+
+  <li>
+    <a id='namedanchor-link-pkcs-1'>[PKCS#1]</a> K.M.Moriarty, B.Kaliski, J.Jonsson, A.Rusch,
+    <i>PKCS #1: RSA Cryptography Standard Version 2.2</i>.
+    <a href="https://tools.ietf.org/html/rfc8017">https://tools.ietf.org/html/rfc8017</a>  </li>
+
+  <li>
+    <a id='namedanchor-link-sec-1'>[SEC#1]</a>    <i>SEC 1: Elliptic Curve Crptography</i>
+    <a href="http://secg.org">http://secg.org</a>  </li>
+</ul>
+
+  </body>
+</html>
