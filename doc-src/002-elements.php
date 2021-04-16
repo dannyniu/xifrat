@@ -1,8 +1,8 @@
 <?php
  require_once(getenv("HARDCOPY_SRCINC_MAIN"));
 
- $hdr1 = hc_H1("Xifrat Elements - The Quasigroup");
- $hdr2 = hc_H2("How did we choose such quasigroup");
+ $hdr1 = hc_H1("Xifrat Elements - The \"Entropic\" Quasigroup");
+ $hdr2 = hc_H2("How did we choose such entropoid");
 
  $algo1 = hc_Figure('Quasigroup Search Program');
 
@@ -14,14 +14,14 @@
 <?= $hdr1 ?>
 
 <p>
-  The core element of Xifrat cryptosystem is a quasigroup of 8 elements.
-  We represent the binary operation of this group as
+  The core element of Xifrat cryptosystem is a entropic quasigroup of
+  8 elements. We represent the binary operation of this group as
   <span class="math">
     <?= mEval(
       "f : &integers;_8 &times; &integers;_8".
       "&rightarrow; &integers;_8") ?>
   </span>.
-  This group has the following properties:
+  This groupoid has the following properties:
 </p>
 
 <ul>

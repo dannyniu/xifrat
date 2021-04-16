@@ -2,6 +2,7 @@
  require_once(getenv("HARDCOPY_SRCINC_MAIN"));
 
  $hdr1 = hc_H1("Introduction");
+ $hdr2 = hc_H2("Parallel Efforts");
 
  if( !hcPageBegin() ) return;
 ?>
@@ -16,8 +17,8 @@
   equivalent) key exchange (secrecy).
 </p>
 
-<p>Two most prominent development occurred
-  in the 1970s -
+<p>
+  Two most prominent development occurred in the 1970s -
   the Diffie-Hellman key exchange <?= hcNamedHref("ref-dh-1976") ?>, and
   the RSA cryptosystem <?= hcNamedHref("ref-rsa-1978") ?>,
   with current cryptanalysis showing that at least 2048-bit parameters are
@@ -80,4 +81,30 @@
 <p>
   The proposed cryptosystem along with the reference implementation
   are released to the public domain.
+</p>
+
+<?= $hdr2 ?>
+
+<p>
+  In an independent effort, D.Gligoroski had proposed
+  <?= hcNamedHref("ref-entropic-quasigroup") ?>
+  the use of quasigroups with "restricted-commutativity" in
+  public-key cryptography and termed it "entropic" quasigroups - "entropoids".
+</p>
+
+<p>
+  In his paper, key exchange and digital signature algorithms are built using
+  a discrete-logarithm-like problem based on an underlaying
+  mathematical structures that doesn't appear to admit cryptanalysis by
+  Shor's algorithm. In an exchange taken between us, we acknowledged that
+  1) his design have more solid foundation than ours;
+  2) our design doesn't appear to provide adequate level of complexity
+  to calm worries of cryptanalysis;
+  3) our design appears to be more efficient than his.
+</p>
+
+<p>
+  Finally, we'd like to note that, if his design withstands the test of time,
+  our choice of verifiably random quasigroup can be beneficially used as
+  a component in his schemes.
 </p>

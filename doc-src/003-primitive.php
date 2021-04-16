@@ -205,7 +205,7 @@
 <p>
   To prove the correctness of "restricted-commutativity" of the
   <span class="math"><var>m</var>()</span> function, we'll first need
-  a few propositions.
+  to simplify the notations and state a few propositions.
 </p>
 
 <p>
@@ -215,10 +215,19 @@
   <span class="math"><?= mEval('f(a,b)') ?></span> as
   <span class="math"><?= mEval('ab') ?></span> , and
   <span class="math"><?= mEval('f(f(...(a,b),c...))') ?></span> as
-  <span class="math"><?= mEval('abc...') ?></span> ;
+  <span class="math"><?= mEval('abc...') ?></span> .
+</p>
 
+<p>
+  <b>Notation 2.</b> We simplify the operation
+  <span class="math"><?= mEval('m(a,b)') ?></span> as
+  <span class="math"><?= mEval('a*b') ?></span> .
+</p>
+
+<p>
+  <b>Notation 3.</b> 
   <?php $wv = "'"; ?>
-  for a function
+  For a function
   <span class="math"><var>e</var>()</span> defined later, we denote
   <span class="math"><?= mEval("e(a)") ?></span> as
   <span class="math"><?= mEval("a$wv") ?></span> .
@@ -294,6 +303,7 @@
 
 <p>
   <b>Prop 3.</b>
+  For members of an entropoid:
   <span class="math">
     <?= mEval(
       "(a_1 a_2 a_3)(b_1 b_2 b_3)(c_1 c_2 c_3) = ".
@@ -321,7 +331,7 @@
 
 <p>
   <b>Main Proposition</b>
-  <span class="math"><?= mEval("(ab)(cd) = (ac)(bd)") ?></span>
+  <span class="math"><?= mEval("(a*b)*(c*d) = (a*c)*(b*d)") ?></span>
 </p>
 
 <p>
@@ -333,13 +343,13 @@
 </p>
 
 <p><span class="math">
-  <?= mEval("(ab)(cd) = (e(ab)b) (e(cd)d) = ") ?>
+  <?= mEval("(a*b)*(c*d) = (e(ab)b) * (e(cd)d) = ") ?>
 </span></p>
 <p><span class="math">
-  <?= mEval("(e(a)e(b)b) (e(c)e(d)d) = ") ?>
+  <?= mEval("(e(a)e(b)b) * (e(c)e(d)d) = ") ?>
 </span></p>
 <p><span class="math">
-  <?= mEval("(a$wv b$wv b) (c$wv d$wv d) = ") ?>
+  <?= mEval("(a$wv b$wv b) * (c$wv d$wv d) = ") ?>
 </span></p>
 <p><span class="math">
   <?= mEval("e(a$wv b$wv b) e(c$wv d$wv d) (c$wv d$wv d) =") ?>
@@ -351,7 +361,7 @@
 <p>Likewise for the right side</p>
 
 <p><span class="math">
-  <?= mEval("(ac)(bd) =") ?>
+  <?= mEval("(a*c)*(b*d) =") ?>
 </span></p>
 <p><span class="math">
   <?= mEval("(a$wv$wv c$wv$wv c$wv) (b$wv$wv d$wv$wv d$wv) (b$wv d$wv d) =") ?>

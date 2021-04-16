@@ -9,6 +9,11 @@ div.abstract {
   margin:       0% 15%;
 }
 
+div#authors {
+  margin:       0% 15%;
+  white-space:  pre-line;
+}
+
 div.toc-list-head {
   font-weight:  bold;
   font-family:  serif;

@@ -13,12 +13,18 @@
 
 <div class=abstract>
   <p>
-    This paper proposes a new public-key cryptosystem based on
+    In this paper, we propose a new public-key cryptosystem based on
     a quasigroup with the special property of "restricted-commutativity".
     We argue its security empirically and present constructions for
     key exchange and digital signature. To the best of our knowledge,
     our primitive and construction have no known polynomial-time attack
     from quantum computers yet.
+  </p>
+
+  <p>
+    We note that quasigroups with such property had been independently
+    proposed for use in public-key cryptography and termed
+    "entropic" quasigroups or "entropoids" by D.Gligoroski.
   </p>
 
   <p>
@@ -28,9 +34,13 @@
 </div>
 
 <div id="authors">
-  Authors: <br/>
-  Daniel Nager (daniel.nager {at} gmail {dot} com), <br/>
-  "Danny" Niu Jianfang (dannyniu {at} hotmail {dot} com)
+  Authors:
+  
+  Daniel Nager
+  (daniel.nager {at} gmail {dot} com),
+  
+  "Danny" Niu Jianfang
+  (Family name is "Niu", dannyniu {at} hotmail {dot} com)
 </div>
 
 <p><small>

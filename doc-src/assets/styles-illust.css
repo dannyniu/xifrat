@@ -2,6 +2,7 @@ figure.algorithm {
   padding:              0pc 1pc;
   border-top:           solid medium black;
   border-bottom:        solid medium black;
+  break-inside:         avoid;
 }
 
 figure.algorithm figcaption {

@@ -179,6 +179,11 @@ div.abstract {
   margin:       0% 15%;
 }
 
+div#authors {
+  margin:       0% 15%;
+  white-space:  pre-line;
+}
+
 div.toc-list-head {
   font-weight:  bold;
   font-family:  serif;
@@ -229,6 +234,7 @@ nav.navbar-multipage {
   padding:              0pc 1pc;
   border-top:           solid medium black;
   border-bottom:        solid medium black;
+  break-inside:         avoid;
 }
 
 figure.algorithm figcaption {
@@ -275,12 +281,18 @@ table.numerical td {
 
 <div class=abstract>
   <p>
-    This paper proposes a new public-key cryptosystem based on
+    In this paper, we propose a new public-key cryptosystem based on
     a quasigroup with the special property of "restricted-commutativity".
     We argue its security empirically and present constructions for
     key exchange and digital signature. To the best of our knowledge,
     our primitive and construction have no known polynomial-time attack
     from quantum computers yet.
+  </p>
+
+  <p>
+    We note that quasigroups with such property had been independently
+    proposed for use in public-key cryptography and termed
+    "entropic" quasigroups or "entropoids" by D.Gligoroski.
   </p>
 
   <p>
@@ -290,9 +302,13 @@ table.numerical td {
 </div>
 
 <div id="authors">
-  Authors: <br/>
-  Daniel Nager (daniel.nager {at} gmail {dot} com), <br/>
-  "Danny" Niu Jianfang (dannyniu {at} hotmail {dot} com)
+  Authors:
+  
+  Daniel Nager
+  (daniel.nager {at} gmail {dot} com),
+  
+  "Danny" Niu Jianfang
+  (Family name is "Niu", dannyniu {at} hotmail {dot} com)
 </div>
 
 <p><small>
@@ -308,8 +324,9 @@ table.numerical td {
 
 <ol class=toc-list>
 <li><a  data-toc-level="h1" href='#h1-1-2473e'>1. Introduction</a></li>
-<li><a  data-toc-level="h1" href='#h1-2-78ab2'>2. Xifrat Elements - The Quasigroup</a></li>
-<li><a   href='#h2-2-1-0f730'>2.1. How did we choose such quasigroup</a></li>
+<li><a   href='#h2-1-1-fedf1'>1.1. Parallel Efforts</a></li>
+<li><a  data-toc-level="h1" href='#h1-2-1436f'>2. Xifrat Elements - The "Entropic" Quasigroup</a></li>
+<li><a   href='#h2-2-1-94b7d'>2.1. How did we choose such entropoid</a></li>
 <li><a   href='#h2-2-2-c7456'>2.2. Miscellaneous information about the quasigroup</a></li>
 <li><a  data-toc-level="h1" href='#h1-3-e6769'>3. Xifrat Primitive - The Mixing Function</a></li>
 <li><a   href='#h2-3-1-f7939'>3.1. The Construction and Instantiation of the Mixing Function</a></li>
@@ -348,8 +365,8 @@ table.numerical td {
   equivalent) key exchange (secrecy).
 </p>
 
-<p>Two most prominent development occurred
-  in the 1970s -
+<p>
+  Two most prominent development occurred in the 1970s -
   the Diffie-Hellman key exchange <a  href='#namedanchor-ref-dh-1976'>[DH76]</a>, and
   the RSA cryptosystem <a  href='#namedanchor-ref-rsa-1978'>[RSA78]</a>,
   with current cryptanalysis showing that at least 2048-bit parameters are
@@ -413,15 +430,42 @@ table.numerical td {
 </p>
 
 
-<h1 id='h1-2-78ab2' data-a-prefix='2.'>Xifrat Elements - The Quasigroup</h1>
+<h2 id='h2-1-1-fedf1' data-a-prefix='1.1.'>Parallel Efforts</h2>
 
 
 <p>
-  The core element of Xifrat cryptosystem is a quasigroup of 8 elements.
-  We represent the binary operation of this group as
+  In an independent effort, D.Gligoroski had proposed
+  <a  href='#namedanchor-ref-entropic-quasigroup'>[Glig21]</a>  the use of quasigroups with "restricted-commutativity" in
+  public-key cryptography and termed it "entropic" quasigroups - "entropoids".
+</p>
+
+<p>
+  In his paper, key exchange and digital signature algorithms are built using
+  a discrete-logarithm-like problem based on an underlaying
+  mathematical structures that doesn't appear to admit cryptanalysis by
+  Shor's algorithm. In an exchange taken between us, we acknowledged that
+  1) his design have more solid foundation than ours;
+  2) our design doesn't appear to provide adequate level of complexity
+  to calm worries of cryptanalysis;
+  3) our design appears to be more efficient than his.
+</p>
+
+<p>
+  Finally, we'd like to note that, if his design withstands the test of time,
+  our choice of verifiably random quasigroup can be beneficially used as
+  a component in his schemes.
+</p>
+
+
+<h1 id='h1-2-1436f' data-a-prefix='2.'>Xifrat Elements - The "Entropic" Quasigroup</h1>
+
+
+<p>
+  The core element of Xifrat cryptosystem is a entropic quasigroup of
+  8 elements. We represent the binary operation of this group as
   <span class="math">
     <var>f</var> : &integers;<sub>8</sub> &times; &integers;<sub>8</sub>&rightarrow; &integers;<sub>8</sub>  </span>.
-  This group has the following properties:
+  This groupoid has the following properties:
 </p>
 
 <ul>
@@ -467,7 +511,7 @@ table.numerical td {
 </p>
 
 
-<h2 id='h2-2-1-0f730' data-a-prefix='2.1.'>How did we choose such quasigroup</h2>
+<h2 id='h2-2-1-94b7d' data-a-prefix='2.1.'>How did we choose such entropoid</h2>
 
 
 <p>
@@ -803,7 +847,7 @@ table.numerical td {
 <p>
   To prove the correctness of "restricted-commutativity" of the
   <span class="math"><var>m</var>()</span> function, we'll first need
-  a few propositions.
+  to simplify the notations and state a few propositions.
 </p>
 
 <p>
@@ -813,9 +857,18 @@ table.numerical td {
   <span class="math"><var>f</var>(<var>a</var>,<var>b</var>)</span> as
   <span class="math"><var>ab</var></span> , and
   <span class="math"><var>f</var>(<var>f</var>(...(<var>a</var>,<var>b</var>),<var>c</var>...))</span> as
-  <span class="math"><var>abc</var>...</span> ;
+  <span class="math"><var>abc</var>...</span> .
+</p>
 
-    for a function
+<p>
+  <b>Notation 2.</b> We simplify the operation
+  <span class="math"><var>m</var>(<var>a</var>,<var>b</var>)</span> as
+  <span class="math"><var>a</var>*<var>b</var></span> .
+</p>
+
+<p>
+  <b>Notation 3.</b> 
+    For a function
   <span class="math"><var>e</var>()</span> defined later, we denote
   <span class="math"><var>e</var>(<var>a</var>)</span> as
   <span class="math"><var>a</var>'</span> .
@@ -876,6 +929,7 @@ table.numerical td {
 
 <p>
   <b>Prop 3.</b>
+  For members of an entropoid:
   <span class="math">
     (<var>a</var><sub>1</sub> <var>a</var><sub>2</sub> <var>a</var><sub>3</sub>)(<var>b</var><sub>1</sub> <var>b</var><sub>2</sub> <var>b</var><sub>3</sub>)(<var>c</var><sub>1</sub> <var>c</var><sub>2</sub> <var>c</var><sub>3</sub>) = (<var>a</var><sub>1</sub> <var>b</var><sub>1</sub> <var>c</var><sub>1</sub>)(<var>a</var><sub>2</sub> <var>b</var><sub>2</sub> <var>c</var><sub>2</sub>)(<var>a</var><sub>3</sub> <var>b</var><sub>3</sub> <var>c</var><sub>3</sub>)  </span>
 </p>
@@ -896,7 +950,7 @@ table.numerical td {
 
 <p>
   <b>Main Proposition</b>
-  <span class="math">(<var>ab</var>)(<var>cd</var>) = (<var>ac</var>)(<var>bd</var>)</span>
+  <span class="math">(<var>a</var>*<var>b</var>)*(<var>c</var>*<var>d</var>) = (<var>a</var>*<var>c</var>)*(<var>b</var>*<var>d</var>)</span>
 </p>
 
 <p>
@@ -908,11 +962,11 @@ table.numerical td {
 </p>
 
 <p><span class="math">
-  (<var>ab</var>)(<var>cd</var>) = (<var>e</var>(<var>ab</var>)<var>b</var>) (<var>e</var>(<var>cd</var>)<var>d</var>) = </span></p>
+  (<var>a</var>*<var>b</var>)*(<var>c</var>*<var>d</var>) = (<var>e</var>(<var>ab</var>)<var>b</var>) * (<var>e</var>(<var>cd</var>)<var>d</var>) = </span></p>
 <p><span class="math">
-  (<var>e</var>(<var>a</var>)<var>e</var>(<var>b</var>)<var>b</var>) (<var>e</var>(<var>c</var>)<var>e</var>(<var>d</var>)<var>d</var>) = </span></p>
+  (<var>e</var>(<var>a</var>)<var>e</var>(<var>b</var>)<var>b</var>) * (<var>e</var>(<var>c</var>)<var>e</var>(<var>d</var>)<var>d</var>) = </span></p>
 <p><span class="math">
-  (<var>a</var>' <var>b</var>' <var>b</var>) (<var>c</var>' <var>d</var>' <var>d</var>) = </span></p>
+  (<var>a</var>' <var>b</var>' <var>b</var>) * (<var>c</var>' <var>d</var>' <var>d</var>) = </span></p>
 <p><span class="math">
   <var>e</var>(<var>a</var>' <var>b</var>' <var>b</var>) <var>e</var>(<var>c</var>' <var>d</var>' <var>d</var>) (<var>c</var>' <var>d</var>' <var>d</var>) =</span></p>
 <p><span class="math">
@@ -921,7 +975,7 @@ table.numerical td {
 <p>Likewise for the right side</p>
 
 <p><span class="math">
-  (<var>ac</var>)(<var>bd</var>) =</span></p>
+  (<var>a</var>*<var>c</var>)*(<var>b</var>*<var>d</var>) =</span></p>
 <p><span class="math">
   (<var>a</var>'' <var>c</var>'' <var>c</var>') (<var>b</var>'' <var>d</var>'' <var>d</var>') (<var>b</var>' <var>d</var>' <var>d</var>) =</span></p>
 
@@ -1129,6 +1183,11 @@ table.numerical td {
     <a id='namedanchor-ref-mqq'>[GMK08]</a>    D.Gligoroski, S.Markovski, S.J.Knapskog,
     <i>Public Key Block Cipher Based on Multivariate Quadratic Quasigroups</i>
     <a href="https://eprint.iacr.org/2008/320">https://eprint.iacr.org/2008/320</a>  </li>
+
+  <li>
+    <a id='namedanchor-ref-entropic-quasigroup'>[Glig21]</a>    D.Gligoroski,
+    <i>Entropoid Based Cryptography</i>
+    <a href="https://eprint.iacr.org/2021/469">https://eprint.iacr.org/2021/469</a>  </li>
   
   <li>
     <a id='namedanchor-ref-ll-gnfs-1993'>[LL93]</a> A.K.Lenstra, H.W.Lenstra,

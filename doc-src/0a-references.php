@@ -15,6 +15,8 @@
 
  $refs["MQQ"] = hcNamedAnchor("[GMK08]", "ref-mqq");
  $refs["MQQ-break"] = hcNamedAnchor("[FOPG10]", "ref-mqq-break");
+
+ $refs["EQG"] = hcNamedAnchor("[Glig21]", "ref-entropic-quasigroup");
  
  $refs["FIPS-202"] = hcNamedAnchor("[FIPS-202]", "link-fips-202");
  $refs["NIST-PQC"] = hcNamedAnchor("[NIST-PQC]", "link-nist-pqc");
@@ -68,6 +70,13 @@
     D.Gligoroski, S.Markovski, S.J.Knapskog,
     <i>Public Key Block Cipher Based on Multivariate Quadratic Quasigroups</i>
     <?= hcURL("https://eprint.iacr.org/2008/320") ?>
+  </li>
+
+  <li>
+    <?= $refs["EQG"] ?>
+    D.Gligoroski,
+    <i>Entropoid Based Cryptography</i>
+    <?= hcURL("https://eprint.iacr.org/2021/469") ?>
   </li>
   
   <li>
