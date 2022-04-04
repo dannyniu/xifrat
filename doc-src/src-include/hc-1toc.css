@@ -9,11 +9,6 @@ div.abstract {
   margin:       0% 15%;
 }
 
-div#authors {
-  margin:       0% 15%;
-  white-space:  pre-line;
-}
-
 div.toc-list-head {
   font-weight:  bold;
   font-family:  serif;
@@ -24,6 +19,15 @@ ol.toc-list {
   list-style:   none;
 }
 
+ol.toc-list a {
+  display:      block;
+}
+
+ol.toc-list a[href*="#h1-"] {
+  margin-top:   1ex;
+  font-weight:  bold;
+}
+
 *[data-a-prefix]::before {
   content:      attr(data-a-prefix) " ";
 }
@@ -31,17 +35,13 @@ ol.toc-list {
 @media print
 {
   ol.toc-list a {
-    display:            inline-block;
     width:              87%;
     position:           relative;
+    /* border-bottom:      dotted; */
     text-decoration:    none;
   }
 
-  ol.toc-list a[data-toc-level=h1] {
-    border-bottom:      dotted;
-  }
-
-  ol.toc-list a[data-toc-level=h1]::after {
+  ol.toc-list a::after {
     /* There is currently no ``leader()'' support in WeasyPrint. */
     position:   absolute;
     right:      0;

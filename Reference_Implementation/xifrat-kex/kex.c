@@ -15,7 +15,7 @@ int crypto_kem_keypair(
     xifrat_kex_dec_context_t x;
     xifrat_kex_keygen(&x, prng_src, NULL);
 
-    xifrat_kex_encode_pubkey(
+    xifrat_kex_export_pubkey(
         &x, (void *)pk,
         sizeof(xifrat_kex_pubkey_t));
 
@@ -39,7 +39,7 @@ int crypto_kem_enc(
 
     xifrat_kex_enc(
         &x, (void *)ss,
-        sizeof(xifrat_cryptogram_t),
+        sizeof(uint64x7_t),
         prng_src, NULL);
 
     xifrat_kex_encode_ciphertext(
@@ -65,7 +65,7 @@ int crypto_kem_dec(
 
     xifrat_kex_dec(
         &x, (void *)ss,
-        sizeof(xifrat_cryptogram_t));
+        sizeof(uint64x7_t));
 
     return 0;
 }

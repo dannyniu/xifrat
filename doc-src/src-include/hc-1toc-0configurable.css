@@ -32,22 +32,45 @@
     string-set: ch1 content();
   }
 
-  /* -- begin: paragraph numbering -- * /
+  /* -- section: elements' fonts -- */
 
-  body > p, main > p {
-    counter-increment:  paragraph-cnt;
-    position:           relative;
+  :root {
+    font-family:
+      TeX Gyre Termes, FreeSerif,
+      Times New Roman, serif;
   }
 
-  body > p::before, main > p::before {
-    content:    counter(paragraph-cnt);
-    text-align: right;
-    display:    block;
-    position:   absolute;
-    left:       -12mm;
-    width:      10mm;
-    height:     100%;
+  h1, h2, h3, h4, h5, h6 {
+    font-family:
+      TeX Gyre Heros, FreeSans,
+      Helvetica, Arial, sans-serif;
   }
 
-  / * -- end: paragraph numbering -- */
+  pre, code, kbd, samp {
+    font-family:
+      TeX Gyre Cursor, FreeMono,
+      Courier New, monospace;
+  }
+
+  /* -- begin: paragraph numbering -- */
+
+  /* body > p, main > p {
+     counter-increment:  paragraph-cnt;
+     position:           relative;
+     }
+
+     body > p::before, main > p::before {
+     content:    counter(paragraph-cnt);
+     text-align: right;
+     display:    block;
+     position:   absolute;
+     left:       -12mm;
+     width:      10mm;
+     height:     100%;
+     } */
+}
+
+span.cite {
+  vertical-align: 2px;
+  font-size:      calc(1em - 2px);
 }

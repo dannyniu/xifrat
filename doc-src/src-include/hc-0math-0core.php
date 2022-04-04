@@ -82,3 +82,18 @@
 
    return $ret;
  }
+
+ function m()
+ {
+   static $opened = false;
+   if( $opened )
+   {
+     $opened = false;
+     return "</span>\n";
+   }
+   else
+   {
+     $opened = true;
+     return "<span class=\"math\">";
+   }
+ }

@@ -11,36 +11,32 @@
  }
 </style>
 
-<div class=abstract>
+<div class="abstract">
   <p>
-    In this paper, we propose a new public-key cryptosystem based on
+    Xifrat was a group-theoretic public-key cryptosystem based on
     a quasigroup with the special property of "restricted-commutativity".
-    We argue its security empirically and present constructions for
-    key exchange and digital signature. To the best of our knowledge,
-    our primitive and construction have no known polynomial-time attack
-    from quantum computers yet.
+    It was broken within half a month of its publication, due to a mistake
+    made in the "mixing" function.
   </p>
 
   <p>
-    We note that quasigroups with such property had been independently
-    proposed for use in public-key cryptography and termed
-    "entropic" quasigroups or "entropoids" by D.Gligoroski.
+    In this paper, we revisit the design decisions made, proposing new
+    constructions, and attempt (again) to build secure digital signature
+    schemes and key encapsulation mechanisms.
   </p>
 
   <p>
-    The proposed cryptosystem along with the reference implementation
-    are released to the public domain.
+    If the schemes can be proven secure, then this will be
+    the most compact and the most efficient post-quantum
+    cryptosystem ever proposed to date.
   </p>
 </div>
 
 <div id="authors">
   Authors:
-  
-  Daniel Nager
-  (daniel.nager {at} gmail {dot} com),
-  
-  "Danny" Niu Jianfang
-  (Family name is "Niu", dannyniu {at} hotmail {dot} com)
+
+  Jianfang "Danny" Niu
+  (dannyniu {at} hotmail {dot} com)
 </div>
 
 <p><small>

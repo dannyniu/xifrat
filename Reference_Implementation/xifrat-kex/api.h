@@ -14,7 +14,7 @@
 //  Set these three values apropriately for your algorithm
 #define CRYPTO_SECRETKEYBYTES ((int)sizeof(xifrat_kex_privkey_t))
 #define CRYPTO_PUBLICKEYBYTES ((int)sizeof(xifrat_kex_pubkey_t))
-#define CRYPTO_BYTES ((int)sizeof(xifrat_cryptogram_t))
+#define CRYPTO_BYTES ((int)sizeof(uint64x7_t))
 #define CRYPTO_CIPHERTEXTBYTES ((int)sizeof(xifrat_kex_ciphertext_t))
 
 // Change the algorithm name

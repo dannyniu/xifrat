@@ -14,7 +14,7 @@ crypto_sign_keypair(unsigned char *pk, unsigned char *sk)
     xifrat_sign_privkey_context_t x;
     xifrat_sign_keygen(&x, prng_src, NULL);
     
-    xifrat_sign_encode_pubkey(
+    xifrat_sign_export_pubkey(
         &x, (void *)pk,
         sizeof(xifrat_sign_pubkey_t));
     

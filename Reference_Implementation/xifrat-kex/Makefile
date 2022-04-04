@@ -2,11 +2,11 @@ LDFLAGS = `pkg-config --libs openssl`
 CFLAGS = `pkg-config --cflags openssl`
 OBJS = kex.o rng.o PQCgenKAT_kem.o \
 ../../src/xifrat-kex.o \
-../../src/xifrat-primitives.c \
-../../src-crypto/shake.c \
-../../src-crypto/sponge.c \
-../../src-crypto/keccak-f-1600.c \
-../../src-crypto/endian.c
+../../src/xifrat-funcs.o \
+../../src-crypto/shake.o \
+../../src-crypto/sponge.o \
+../../src-crypto/keccak-f-1600.o \
+../../src-crypto/endian.o
 
 PQCgenKAT_kem : $(OBJS)
 	gcc $(LDFLAGS) $(CFLAGS) -o $@ $^

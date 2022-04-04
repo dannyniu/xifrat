@@ -3,14 +3,18 @@
 #ifndef xifrat_kex_h
 #define xifrat_kex_h 1
 
-#include "xifrat-primitives.h"
+#include "xifrat-funcs.h"
+
+#define XIFRAT_SEEDLEN 8
 
 typedef struct {
-    xifrat_array_t C, K, P, Q;
+    uint8_t seed[XIFRAT_SEEDLEN];
+    uint64x7_t a, c, e, g, i, s1, s2, p, q;
 } xifrat_kex_dec_context_t;
 
 typedef struct {
-    xifrat_array_t C, K, P, Q;
+    uint8_t seed[XIFRAT_SEEDLEN];
+    uint64x7_t a, c, e, g, i, s1, s2, p, q;
 } xifrat_kex_enc_context_t;
 
 // returns x on success and NULL on failure.
@@ -30,11 +34,12 @@ void *xifrat_kex_dec(
     void *restrict ss, size_t sslen);
 
 typedef struct {
-    xifrat_cryptogram_t C, P;
+    uint8_t seed[XIFRAT_SEEDLEN];
+    uint64x7_t p;
 } xifrat_kex_pubkey_t;
 
 // returns out on success and NULL on failure (e.g. outlen too short).
-void *xifrat_kex_encode_pubkey(
+void *xifrat_kex_export_pubkey(
     xifrat_kex_dec_context_t *restrict x,
     xifrat_kex_pubkey_t *restrict out, size_t outlen);
 
@@ -44,7 +49,8 @@ void *xifrat_kex_decode_pubkey(
     xifrat_kex_pubkey_t const *restrict in, size_t inlen);
 
 typedef struct {
-    xifrat_cryptogram_t C, K, P;
+    uint8_t seed[XIFRAT_SEEDLEN];
+    uint64x7_t s1, s2;
 } xifrat_kex_privkey_t;
 
 // returns out on success and NULL on failure (e.g. outlen too short).
@@ -58,7 +64,7 @@ void *xifrat_kex_decode_privkey(
     xifrat_kex_privkey_t const *restrict in, size_t inlen);
 
 typedef struct {
-    xifrat_cryptogram_t cryptogram;
+    uint64x7_t cryptogram;
 } xifrat_kex_ciphertext_t;
 
 // returns out on success and NULL on failure (e.g. outlen too short).

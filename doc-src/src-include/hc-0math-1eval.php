@@ -1,7 +1,7 @@
 <?php
  # For documentation and explanation of
  # what mEval and all these functions do,
- # refer to "doc/simple-expression.txt"
+ # refer to "doc/simple-expression.md"
 
  function __mEval_str2groups($str)
  {
@@ -87,7 +87,8 @@
        $c = nextc($str, $pos, $len); // physical character.
        $cc = $c; // logical character.
 
-       if( $c == ord("&") ) // decode HTML entity into logical character.
+       if( $c == ord("&") )
+         // decode HTML entity into logical character.
        {
          $d = $c;
          $rem1 = $pos1;
@@ -102,9 +103,9 @@
        }
 
        if( $c < 0 )
-       {
          // end-of-string,
          // flush then continue in next in ``$a''.
+       {
 
          if( $elem["t"] ) {
            $elem["v"] = substr($str, $rem, $pos1-$rem);
@@ -115,11 +116,8 @@
 
        else if( __mIsAlpha($cc) )
        {
-         // consume input if true,
-         if( $elem["t"] == "t" || $elem["t"] == "l" );
-
-         // else, flush and reset ``$elem''.
-         else
+         // consume input if true, else, flush and reset ``$elem''.
+         if( $elem["t"] == "t" || $elem["t"] == "l" ); else
          {
            if( $elem["t"] ) {
              $elem["v"] = substr($str, $rem, $pos1-$rem);
@@ -135,11 +133,8 @@
 
        else if( __mIsDigit($cc) )
        {
-         // consume input if true,
-         if( $elem["t"] == "t" || $elem["t"] == "a" );
-
-         // else, flush and reset ``$elem''.
-         else
+         // consume input if true, else, flush and reset ``$elem''.
+         if( $elem["t"] == "t" || $elem["t"] == "a" ); else
          {
            if( $elem["t"] ) {
              $elem["v"] = substr($str, $rem, $pos1-$rem);
@@ -187,11 +182,8 @@
 
        else // symbol (mostly operators) assumed.
        {
-         // consume input if true,
-         if( $elem["t"] == "a" );
-
-         // else, flush and reset ``$elem''.
-         else
+         // consume input if true, else, flush and reset ``$elem''.
+         if( $elem["t"] == "a" ); else
          {
            if( $elem["t"] ) {
              $elem["v"] = substr($str, $rem, $pos1-$rem);
@@ -324,7 +316,7 @@
    return $ret;
  }
 
- function __mEval_dumptree__($tree, $ilevel = 0)
+ function __mEval_dumptree($tree, $ilevel = 0)
  {
    $ret = "";
 
@@ -349,12 +341,12 @@
    return $ret;
  }
 
- function __mEval_test__()
+ function __mEval_test()
  {
    $v = __mEval_str2groups("x^{sum_{\cond_1}(y_i)} = prod_{\{cond}^2}(x^{y_i})");
    // print_r($v);
    $v = __mEval_groups2tree($v);
-   echo __mEval_dumptree__($v);
+   echo __mEval_dumptree($v);
    $v = __mEval_translate($v);
    print_r($v);
  }
