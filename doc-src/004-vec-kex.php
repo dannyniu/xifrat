@@ -26,7 +26,7 @@
 <?= $hdr1_1 ?>
 
 <p>
-  The purpose of the Vec function is identical to that of the Blk function,
+  The purpose of the Vec function is the same as that of the Blk function,
   except it works over a different domain. The Vec function works over 2
   cryptograms that's made up of 7 63-bit slices similar to Enc and Mlt.
   The cryptogram is also 448-bit long with 441 effective bits.
@@ -135,3 +135,15 @@ g h i
     </li>
   </ol>
 </figure>
+
+<table class="infobox">
+  <thead>
+    <th colspan="2">Parameters</th>
+  </thead>
+
+  <tbody>
+    <tr><th>private key bytes</th><td>120</td></tr>
+    <tr><th>public key bytes</th><td>64</td></tr>
+    <tr><th>ciphertext bytes</th><td>56</td></tr>
+  </tbody>
+</table>

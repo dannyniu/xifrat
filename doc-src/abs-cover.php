@@ -13,22 +13,17 @@
 
 <div class="abstract">
   <p>
-    Xifrat was a group-theoretic public-key cryptosystem based on
-    a quasigroup with the special property of "restricted-commutativity".
-    It was broken within half a month of its publication, due to a mistake
-    made in the "mixing" function.
-  </p>
-
-  <p>
-    In this paper, we revisit the design decisions made, proposing new
-    constructions, and attempt (again) to build secure digital signature
-    schemes and key encapsulation mechanisms.
-  </p>
-
-  <p>
-    If the schemes can be proven secure, then this will be
-    the most compact and the most efficient post-quantum
-    cryptosystem ever proposed to date.
+    Xifrat was a group-theoretic public-key cryptosystem
+    based on a quasigroup with the special property of
+    "restricted-commutativity". It was broken within
+    half a month of its publication, due to a mistake
+    made in the "mixing" function. In this paper, we revisit
+    the design decisions made, proposing new constructions,
+    and attempt (again) to build secure digital signature
+    schemes and key encapsulation mechanisms. If the schemes
+    can be proven secure, then this will be the most compact
+    and the most efficient post-quantum cryptosystem
+    ever proposed to date.
   </p>
 </div>
 

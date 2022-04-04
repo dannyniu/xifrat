@@ -9,3 +9,13 @@ figure.algorithm figcaption {
   text-align:           center;
   border-bottom:        solid thin black;
 }
+
+table.infobox {
+  border-collapse:      collapse;
+}
+
+table.infobox th,
+table.infobox td {
+  padding:              1mm;
+  border:               solid thin black;
+}

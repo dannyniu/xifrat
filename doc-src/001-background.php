@@ -25,7 +25,7 @@
   executes in time that's an order of magnitude longer than lattice-based
   ones such as Kyber <?= cite("ref-kyber") ?> and Saber
   <?= cite("ref-saber") ?> , although, such difference is not too noticable;
-  likewise, the later design that didn't manage to
+  likewise, a later design that didn't manage to
   get into the NIST PQC project - SQISign <?= cite("ref-sqisign") ?>
   from Oct 2020 has signing time that's over 2 seconds long on
   modern workstation PCs.

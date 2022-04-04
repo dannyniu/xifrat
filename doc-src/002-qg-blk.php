@@ -80,19 +80,25 @@
 </p>
 
 <pre>// Quasigroup generated using the new program //
-  2   0   4   3   5   7   1   6 
-  1   5   3   4   0   6   2   7 
-  7   4   0   5   3   2   6   1 
-  0   2   7   6   1   4   5   3 
-  3   6   1   2   7   5   4   0 
-  6   3   5   0   4   1   7   2 
-  4   7   2   1   6   0   3   5 
-  5   1   6   7   2   3   0   4 
+  2   0   4   3   5   7   1   6
+  1   5   3   4   0   6   2   7
+  7   4   0   5   3   2   6   1
+  0   2   7   6   1   4   5   3
+  3   6   1   2   7   5   4   0
+  6   3   5   0   4   1   7   2
+  4   7   2   1   6   0   3   5
+  5   1   6   7   2   3   0   4
 </pre>
 
 <p>
   The operation &<$ ab &> evaluates to the table cell at a'th row and b'th
   column, in 0-based index.
+</p>
+
+<p>
+  We propose the <b>1st open problem</b> of this paper:
+  Can we find a verifiably random 16-by-16 quasigroup table?
+  Can we find one efficiently?
 </p>
 
 <?= $hdr1_2 ?>
@@ -201,4 +207,11 @@
   repeated tritet. This is due to such input would produce same array of
   operations at every lane of output tritet. At the moment, we do not know
   if this is exploitable in the actual KEM and DSS scheme.
+</p>
+
+<p>
+  We propose the <b>2nd open problem</b> of this paper:
+  Is there other more efficient construction which is similar to both
+  Blk and Enc, in that such construction provides key-hiding and
+  is restricted-commutative over itself?
 </p>

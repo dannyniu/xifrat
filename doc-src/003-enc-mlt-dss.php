@@ -134,3 +134,26 @@
     <li> If &<$ T_1 = T_2 &> return [VALID] ; otherwise return [INVALID].</li>
   </ol>
 </figure>
+
+<p>
+  The proof of correctness of the scheme is as follow:
+</p>
+
+<p>
+  &<$ T_1 = M( P_1 , S ) = M( E(C,K) , E(H,Q) ) &> <br/>
+  &<$ T_2 = E( M(C,H) , P_2 ) = E( M(C,H) , M(K,Q) ) &> <br/>
+  By restricted commutativity between Mlt and Enc,
+  &<$ T_1 = T_2 &>
+</p>
+
+<table class="infobox">
+  <thead>
+    <th colspan="2">Parameters</th>
+  </thead>
+
+  <tbody>
+    <tr><th>private key bytes</th><td>168</td></tr>
+    <tr><th>public key bytes</th><td>168</td></tr>
+    <tr><th>signature bytes</th><td>56</td></tr>
+  </tbody>
+</table>
