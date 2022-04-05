@@ -62,7 +62,7 @@ uint64_t xifrat_Blk(uint64_t a, uint64_t b)
         v = f_wide(v, b);
     }
 
-    return f_wide(u, v);
+    return f_wide(f_wide(f_wide(u, v), u), v);
 }
 
 void xifrat_Enc(uint64x7_t out, uint64x7_t a, uint64x7_t b)
@@ -99,7 +99,7 @@ void xifrat_Mlt(uint64x7_t out, uint64x7_t a, uint64x7_t b)
 
 void xifrat_Vec(uint64x7_t out, uint64x7_t a, uint64x7_t b)
 {
-    uint64x7_t u, v;
+    uint64x7_t u, v, x, y;
     int i, j;
 
     for(j=0; j<VLEN; j++)
@@ -117,7 +117,8 @@ void xifrat_Vec(uint64x7_t out, uint64x7_t a, uint64x7_t b)
         }
     }
 
-    for(j=0; j<VLEN; j++) out[j] = xifrat_Blk(u[j], v[j]);
+    for(j=0; j<VLEN; j++)
+        out[j] = xifrat_Blk(xifrat_Blk(xifrat_Blk(u[j], v[j]), u[j]), v[j]);
 }
 
 void xifrat_cryptogram_decode(uint64x7_t wx, const void *os)
