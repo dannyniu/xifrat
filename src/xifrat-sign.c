@@ -8,7 +8,6 @@ void *xifrat_sign_keygen(
     GenFunc_t prng_gen, void *restrict prng)
 {
     uint64x7_t cryptogram;
-    int i;
 
     prng_gen(prng, &cryptogram, sizeof(cryptogram));
     xifrat_cryptogram_decode(x->C, cryptogram);

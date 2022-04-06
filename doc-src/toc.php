@@ -7,7 +7,7 @@
  hcAddPages("001-background");
  hcAddPages("002-qg-blk");
  hcAddPages("003-enc-mlt-dss");
- hcAddPages("004-vec-kex");
+ hcAddPages("004-vec-dup-kex");
 
  hc_StartAnnexes();
  hcAddPages("0a-references");

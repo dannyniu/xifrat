@@ -65,14 +65,12 @@ uint64_t xifrat_Blk(uint64_t a, uint64_t b)
     return f_wide(f_wide(f_wide(u, v), u), v);
 }
 
-void xifrat_Enc(uint64x7_t out, uint64x7_t a, uint64x7_t b)
+void xifrat_Enc(uint64x7_t out, const uint64x7_t a, const uint64x7_t b)
 {
     int i, j;
 
     for(j=0; j<VLEN; j++)
     {
-        a[j] &= INT64_MAX;
-        b[j] &= INT64_MAX;
         out[j] = xifrat_Blk(xifrat_Blk(b[j], a[j]), b[j]);
     }
     
@@ -87,7 +85,7 @@ void xifrat_Enc(uint64x7_t out, uint64x7_t a, uint64x7_t b)
     }
 }
 
-void xifrat_Mlt(uint64x7_t out, uint64x7_t a, uint64x7_t b)
+void xifrat_Mlt(uint64x7_t out, const uint64x7_t a, const uint64x7_t b)
 {
     int i;
     
@@ -97,9 +95,9 @@ void xifrat_Mlt(uint64x7_t out, uint64x7_t a, uint64x7_t b)
     }
 }
 
-void xifrat_Vec(uint64x7_t out, uint64x7_t a, uint64x7_t b)
+void xifrat_Vec(uint64x7_t out, const uint64x7_t a, const uint64x7_t b)
 {
-    uint64x7_t u, v, x, y;
+    uint64x7_t u, v;
     int i, j;
 
     for(j=0; j<VLEN; j++)
@@ -121,6 +119,34 @@ void xifrat_Vec(uint64x7_t out, uint64x7_t a, uint64x7_t b)
         out[j] = xifrat_Blk(xifrat_Blk(xifrat_Blk(u[j], v[j]), u[j]), v[j]);
 }
 
+void xifrat_Dup(uint64x14_t out, const uint64x14_t a, const uint64x14_t b)
+{
+    uint64x14_t u, v;
+    int i, j;
+
+    for(j=0; j<DLEN*VLEN; j++)
+    {
+        u[j] = a[j] & INT64_MAX;
+        v[j] = b[j] & INT64_MAX;
+    }
+    
+    for(i=1; i<DLEN; i++)
+    {
+        for(j=0; j<DLEN; j++)
+        {
+            xifrat_Vec(u+j*VLEN, u+j*VLEN, a+((i+j)%DLEN)*VLEN);
+            xifrat_Vec(v+j*VLEN, v+j*VLEN, b+((i+j)%DLEN)*VLEN);
+        }
+    }
+
+    for(j=0; j<DLEN; j++)
+    {
+        xifrat_Vec(out+j*VLEN, u+j*VLEN, v+j*VLEN);
+        xifrat_Vec(u+j*VLEN, out+j*VLEN, u+j*VLEN);
+        xifrat_Vec(out+j*VLEN, u+j*VLEN, v+j*VLEN);
+    }
+}
+
 void xifrat_cryptogram_decode(uint64x7_t wx, const void *os)
 {
     const uint64_t *buf = os;
@@ -136,5 +162,23 @@ void xifrat_cryptogram_encode(void *os, const uint64x7_t wx)
     int i;
 
     for(i=0; i<VLEN; i++)
+        buf[i] = htole64(wx[i] & INT64_MAX);
+}
+
+void xifrat_bigram_decode(uint64x14_t wx, const void *os)
+{
+    const uint64_t *buf = os;
+    int i;
+    
+    for(i=0; i<DLEN*VLEN; i++)
+        wx[i] = le64toh(buf[i]) & INT64_MAX;
+}
+
+void xifrat_bigram_encode(void *os, const uint64x14_t wx)
+{
+    uint64_t *buf = os;
+    int i;
+
+    for(i=0; i<DLEN*VLEN; i++)
         buf[i] = htole64(wx[i] & INT64_MAX);
 }

@@ -6,17 +6,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main(int argc, char *argv[])
+int main() // int argc, char *argv[])
 {
-    uint64x7_t a, b, c, d, u, v, x, y;
+    uint64x14_t a, b, c, d, u, v, x, y;
+
     int fails = 0;
 
-    for(int i=0; i<100*100; i++)
+    for(int i=0; i<20*20; i++)
     {
-        fread(&a, 1, 56, stdin);
-        fread(&b, 1, 56, stdin);
-        fread(&c, 1, 56, stdin);
-        fread(&d, 1, 56, stdin);
+        fread(&a, 1, 112, stdin);
+        fread(&b, 1, 112, stdin);
+        fread(&c, 1, 112, stdin);
+        fread(&d, 1, 112, stdin);
 
         xifrat_Enc(u, a, b);
         xifrat_Enc(v, c, d);
@@ -43,6 +44,20 @@ int main(int argc, char *argv[])
         if( memcmp(x, y, 56) )
         {
             printf("Vec-Vec failed!\n");
+            fails++;
+        }
+
+        xifrat_Dup(u, a, b);
+        xifrat_Dup(v, c, d);
+        xifrat_Dup(x, u, v);
+
+        xifrat_Dup(u, a, c);
+        xifrat_Dup(v, b, d);
+        xifrat_Dup(y, u, v);
+
+        if( memcmp(x, y, 112) )
+        {
+            printf("Dup-Dup failed!\n");
             fails++;
         }
     }

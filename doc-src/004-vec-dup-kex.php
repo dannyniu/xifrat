@@ -1,17 +1,18 @@
 <?php
  require_once(getenv("HARDCOPY_SRCINC_MAIN"));
 
- $hdr1 = hc_H1("The Vec function and Xifrat1-Kex");
+ $hdr1 = hc_H1("The Vec and Dup functions and Xifrat1-Kex.I");
 
- $hdr1_1 = hc_H2("Restricted Commutativity of Vec over Itself");
+ $hdr1_1 = hc_H2("Restricted Commutativity of Vec and Dup over themselves");
 
  $algo_Vec = hc_Figure("The algorithm for the Vec function");
+ $algo_Dup = hc_Figure("The algorithm for the Dup function");
  
- $hdr1_2 = hc_H2("The Xifrat1-Kex KEM");
+ $hdr1_2 = hc_H2("The Xifrat1-Kex.I KEM");
 
- $algo_kem_keygen = hc_Figure("Xifrat1-Kex Key Generation");
- $algo_kem_enc = hc_Figure("Xifrat1-Kex Encapsulation");
- $algo_kem_dec = hc_Figure("Xifrat1-Kex Decapsulation");
+ $algo_kem_keygen = hc_Figure("Xifrat1-Kex.I Key Generation");
+ $algo_kem_enc = hc_Figure("Xifrat1-Kex.I Encapsulation");
+ $algo_kem_dec = hc_Figure("Xifrat1-Kex.I Decapsulation");
 
  if( !hcPageBegin() ) return;
 ?>
@@ -19,8 +20,9 @@
 <?= $hdr1 ?>
 
 <p>
-  In this section, we present the Vec function, discuss the properties needed
-  for constructing key exchange from it, and present such construction.
+  In this section, we present the Vec and the Dup function, discuss the
+  properties needed for constructing key exchange from it, and present
+  such construction.
 </p>
 
 <?= $hdr1_1 ?>
@@ -30,9 +32,26 @@
   except it works over a different domain. The Vec function works over 2
   cryptograms that's made up of 7 63-bit slices similar to Enc and Mlt.
   The cryptogram is also 448-bit long with 441 effective bits.
-  The construction of Vec is structurally similar to Blk, thus it does not
-  hide either operand. In the Xifrat1-Kex key agreement scheme, we see that
-  this property is not needed for security.
+  The construction of Vec is structurally similar to Blk.
+</p>
+
+<p>
+  Within the Vec function, each of the 63-bit slices are ''hashed'' in the
+  Blk function, and applied sequentially twice interlaced with the other
+  operand. An obvious flaw is that, if we can <em>individually</em>
+  brutal-force the slices, then we can evaluate the key exchange maths,
+  which is a fatal break. (This had been an oversight in the previous
+  versions of this paper, which we fix now, by appending the Roman numeral
+  ".I" to the name of the scheme.)
+</p>
+
+<p>
+  This is why, another layer is needed, which we call Dup. The purpose of
+  Dup is, yet again, the same as Blk as well as Vec, but this time,
+  the 7 slices are ''hashed'', requiring attacker to brutal force
+  &<$ 7 &times; 63 = 441 &> bits. While this is a overkill for almost every
+  scenario, we leave this as an overhead in case any powerful cryptanalytic
+  attack is discovered.
 </p>
 
 <figure class="algorithm">
@@ -59,8 +78,25 @@
   </ul>
 </figure>
 
+<figure class="algorithm">
+  <figcaption><?= $algo_Dup ?></figcaption>
+  <ul>
+    <li>Input: &<$ A=(A_0 A_1) , B=(B_0 B_1) &></li>
+    <li>Output: &<$ C=(C_0 C_1) &></li>
+  </ul>
+  <p>Steps:</p>
+  <ul>
+    <li>&<$ C_0 =
+      (A_0 A_1) (B_0 B_1)
+      (A_0 A_1) (B_0 B_1) &></li>
+    <li>&<$ C_1 =
+      (A_1 A_0) (B_1 B_0)
+      (A_1 A_0) (B_1 B_0) &></li>
+  </ul>
+</figure>
+
 <p>
-  For ease of readability, &<$ V(V(a,b),c) &>
+  For ease of readability, &<$ D(D(a,b),c) &>
   will be rewritten as &<$ (a &#x2219; b &#x2219; c) &> .
 </p>
 
@@ -102,14 +138,15 @@ g h i
   SHAKE-128. We take 448-bit in turn, interpret it as 7 64-bit
   unsigned integers in little-endian and clear each of their top bits, and
   generate 5 of these and assign them to &<$ a, c, e, g, i &> in order.
-  We denote this XOF as &<$ \Hx_{448x5-35}(seed) &> .
+  We denote this XOF as &<$ \Hx_{[448-7]&times;2}(seed) &> .
 </p>
 
 <figure class="algorithm">
   <figcaption><?= $algo_kem_keygen ?></figcaption>
   <ol>
     <li> Uniformly randomly generate choose a &<$ seed &> , </li>
-    <li> Generate &<$ a, c, e, g, i &> using &<$ \Hx_{448x5-35}(seed) &> , </li>
+    <li> Generate &<$ a, c, e, g, i &> using
+      &<$ \Hx_{[448-7]&times;2}(seed) &> , </li>
     <li> Uniformly randomly generate 2 cryptograms &<$ b, h &> , </li>
     <li> Compute &<$ p = (b &#x2219; e &#x2219; h) &> , </li>
     <li> Return &<$ pk = ( seed , p ) &> as the public key and
@@ -121,7 +158,7 @@ g h i
   <figcaption><?= $algo_kem_enc ?></figcaption>
   <ol>
     <li> Expand &<$ seed &> into &<$ a, c, e, g, i &>
-      using &<$ \Hx_{448x5-35}(seed) &> , </li>
+      using &<$ \Hx_{[448-7]&times;2}(seed) &> , </li>
     <li> Uniformly randomly generate 2 cryptograms &<$ d, f &> , </li>
     <li> Compute &<$ ss =
       (a &#x2219; d &#x2219; g)
@@ -150,8 +187,8 @@ g h i
   </thead>
 
   <tbody>
-    <tr><th>private key bytes</th><td>120</td></tr>
-    <tr><th>public key bytes</th><td>64</td></tr>
-    <tr><th>ciphertext bytes</th><td>56</td></tr>
+    <tr><th>private key bytes</th><td>232</td></tr>
+    <tr><th>public key bytes</th><td>120</td></tr>
+    <tr><th>ciphertext bytes</th><td>112</td></tr>
   </tbody>
 </table>

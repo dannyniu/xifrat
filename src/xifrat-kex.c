@@ -8,8 +8,7 @@ void *xifrat_kex_keygen(
     GenFunc_t prng_gen, void *prng)
 {
     shake128_t xof;
-    uint64x7_t cryptogram;
-    int i;
+    uint64x14_t cryptogram;
 
     // generate acegi from seed
     prng_gen(prng, &x->seed, XIFRAT_SEEDLEN);
@@ -19,36 +18,36 @@ void *xifrat_kex_keygen(
     SHAKE_Final(&xof);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->a, cryptogram);
+    xifrat_bigram_decode(x->a, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->c, cryptogram);
+    xifrat_bigram_decode(x->c, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->e, cryptogram);
+    xifrat_bigram_decode(x->e, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->g, cryptogram);
+    xifrat_bigram_decode(x->g, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->i, cryptogram);
+    xifrat_bigram_decode(x->i, cryptogram);
 
     // generate private key
-    prng_gen(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->s1, cryptogram); // b
+    prng_gen(prng, cryptogram, sizeof(cryptogram));
+    xifrat_bigram_decode(x->s1, cryptogram); // b
 
-    prng_gen(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->s2, cryptogram); // h
+    prng_gen(prng, cryptogram, sizeof(cryptogram));
+    xifrat_bigram_decode(x->s2, cryptogram); // h
 
     // compute the public key
-    xifrat_Vec(x->q, x->s1, x->e);
-    xifrat_Vec(x->p, x->q, x->s2);
+    xifrat_Dup(x->q, x->s1, x->e);
+    xifrat_Dup(x->p, x->q, x->s2);
 
     // pre-compute for acceleration
-    xifrat_Vec(x->q, x->a, x->s1);
-    xifrat_Vec(x->a, x->q, x->c); // a = (abc)
-    xifrat_Vec(x->q, x->g, x->s2);
-    xifrat_Vec(x->g, x->q, x->i); // g = (ghi)
+    xifrat_Dup(x->q, x->a, x->s1);
+    xifrat_Dup(x->a, x->q, x->c); // a = (abc)
+    xifrat_Dup(x->q, x->g, x->s2);
+    xifrat_Dup(x->g, x->q, x->i); // g = (ghi)
 
     return x;
 }
@@ -58,34 +57,33 @@ void *xifrat_kex_enc(
     void *restrict ss, size_t sslen,
     GenFunc_t prng_gen, void *prng)
 {
-    shake128_t xof;
-    uint64x7_t cryptogram;
-    uint64x7_t u, v, w;
-    int i;
+    uint64x14_t cryptogram;
+    uint64x14_t u, v, w;
+    unsigned i;
 
     // generate ciphertext
-    prng_gen(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->s1, cryptogram); // d
+    prng_gen(prng, cryptogram, sizeof(cryptogram));
+    xifrat_bigram_decode(x->s1, cryptogram); // d
 
-    prng_gen(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->s2, cryptogram); // f
+    prng_gen(prng, cryptogram, sizeof(cryptogram));
+    xifrat_bigram_decode(x->s2, cryptogram); // f
 
-    xifrat_Vec(w, x->s1, x->e);
-    xifrat_Vec(x->q, w, x->s2);
+    xifrat_Dup(w, x->s1, x->e);
+    xifrat_Dup(x->q, w, x->s2);
 
     // compute the shared secret
-    xifrat_Vec(w, x->a, x->s1);
-    xifrat_Vec(u, w, x->g);
+    xifrat_Dup(w, x->a, x->s1);
+    xifrat_Dup(u, w, x->g);
 
-    xifrat_Vec(w, x->c, x->s2);
-    xifrat_Vec(v, w, x->i);
+    xifrat_Dup(w, x->c, x->s2);
+    xifrat_Dup(v, w, x->i);
 
-    xifrat_Vec(w, u, x->p);
-    xifrat_Vec(u, w, v);
+    xifrat_Dup(w, u, x->p);
+    xifrat_Dup(u, w, v);
 
     // output the shared secret as a cryptogram
     // (needs to be hashed by e.g. HKDF)
-    xifrat_cryptogram_encode(cryptogram, u);
+    xifrat_bigram_encode(cryptogram, u);
     for(i=0; i<sizeof(cryptogram) && i<sslen; i++)
         ((uint8_t *)ss)[i] = ((uint8_t *)cryptogram)[i];
     for(; i<sslen; i++)
@@ -98,16 +96,16 @@ void *xifrat_kex_dec(
     xifrat_kex_dec_context_t *restrict x,
     void *restrict ss, size_t sslen)
 {
-    uint64x7_t cryptogram;
-    int i;
+    uint64x14_t cryptogram;
+    unsigned i;
 
     // compute the shared secret
-    xifrat_Vec(x->c, x->a, x->q);
-    xifrat_Vec(x->i, x->c, x->g);
+    xifrat_Dup(x->c, x->a, x->q);
+    xifrat_Dup(x->i, x->c, x->g);
     
     // output the shared secret as a cryptogram
     // (needs to be hashed by e.g. HKDF)
-    xifrat_cryptogram_encode(cryptogram, x->i);
+    xifrat_bigram_encode(cryptogram, x->i);
     for(i=0; i<sizeof(cryptogram) && i<sslen; i++)
         ((uint8_t *)ss)[i] = ((uint8_t *)cryptogram)[i];
     for(; i<sslen; i++)
@@ -120,12 +118,12 @@ void *xifrat_kex_export_pubkey(
     xifrat_kex_dec_context_t *restrict x,
     xifrat_kex_pubkey_t *restrict out, size_t outlen)
 {
-    int i;
+    unsigned i;
 
     if( outlen < sizeof(xifrat_kex_pubkey_t) ) return NULL;
     
     for(i=0; i<XIFRAT_SEEDLEN; i++) out->seed[i] = x->seed[i];
-    xifrat_cryptogram_encode(out->p, x->p);
+    xifrat_bigram_encode(out->p, x->p);
 
     return out;
 }
@@ -135,8 +133,8 @@ void *xifrat_kex_decode_pubkey(
     xifrat_kex_pubkey_t const *restrict in, size_t inlen)
 {
     shake128_t xof;
-    uint64x7_t cryptogram;
-    int i;
+    uint64x14_t cryptogram;
+    unsigned i;
 
     if( inlen < sizeof(xifrat_kex_pubkey_t) ) return NULL;
 
@@ -148,22 +146,22 @@ void *xifrat_kex_decode_pubkey(
     SHAKE_Final(&xof);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->a, cryptogram);
+    xifrat_bigram_decode(x->a, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->c, cryptogram);
+    xifrat_bigram_decode(x->c, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->e, cryptogram);
+    xifrat_bigram_decode(x->e, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->g, cryptogram);
+    xifrat_bigram_decode(x->g, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->i, cryptogram);
+    xifrat_bigram_decode(x->i, cryptogram);
 
     // copy public cryptogram
-    xifrat_cryptogram_decode(x->p, in->p);
+    xifrat_bigram_decode(x->p, in->p);
 
     return x;
 }
@@ -172,13 +170,13 @@ void *xifrat_kex_encode_privkey(
     xifrat_kex_dec_context_t *restrict x,
     xifrat_kex_privkey_t *restrict out, size_t outlen)
 {
-    int i;
+    unsigned i;
 
     if( outlen < sizeof(xifrat_kex_pubkey_t) ) return NULL;
     
     for(i=0; i<XIFRAT_SEEDLEN; i++) out->seed[i] = x->seed[i];
-    xifrat_cryptogram_encode(out->s1, x->s1);
-    xifrat_cryptogram_encode(out->s2, x->s2);
+    xifrat_bigram_encode(out->s1, x->s1);
+    xifrat_bigram_encode(out->s2, x->s2);
 
     return out;
 }
@@ -188,8 +186,8 @@ void *xifrat_kex_decode_privkey(
     xifrat_kex_privkey_t const *restrict in, size_t inlen)
 {
     shake128_t xof;
-    uint64x7_t cryptogram;
-    int i;
+    uint64x14_t cryptogram;
+    unsigned i;
 
     // generate acegi from seed
     for(i=0; i<XIFRAT_SEEDLEN; i++) x->seed[i] = in->seed[i];
@@ -199,33 +197,33 @@ void *xifrat_kex_decode_privkey(
     SHAKE_Final(&xof);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->a, cryptogram);
+    xifrat_bigram_decode(x->a, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->c, cryptogram);
+    xifrat_bigram_decode(x->c, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->e, cryptogram);
+    xifrat_bigram_decode(x->e, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->g, cryptogram);
+    xifrat_bigram_decode(x->g, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_cryptogram_decode(x->i, cryptogram);
+    xifrat_bigram_decode(x->i, cryptogram);
 
     // generate private key
-    xifrat_cryptogram_encode(x->s1, in->s1); // b
-    xifrat_cryptogram_encode(x->s2, in->s2); // h
+    xifrat_bigram_encode(x->s1, in->s1); // b
+    xifrat_bigram_encode(x->s2, in->s2); // h
     
     // compute the public key
-    xifrat_Vec(x->q, x->s1, x->e);
-    xifrat_Vec(x->p, x->q, x->s2);
+    xifrat_Dup(x->q, x->s1, x->e);
+    xifrat_Dup(x->p, x->q, x->s2);
 
     // pre-compute for acceleration
-    xifrat_Vec(x->q, x->a, x->s1);
-    xifrat_Vec(x->a, x->q, x->c); // a = (abc)
-    xifrat_Vec(x->q, x->g, x->s2);
-    xifrat_Vec(x->g, x->q, x->i); // g = (ghi)
+    xifrat_Dup(x->q, x->a, x->s1);
+    xifrat_Dup(x->a, x->q, x->c); // a = (abc)
+    xifrat_Dup(x->q, x->g, x->s2);
+    xifrat_Dup(x->g, x->q, x->i); // g = (ghi)
 
     return x;
 }
@@ -236,7 +234,7 @@ void *xifrat_kex_encode_ciphertext(
 {
     if( outlen < sizeof(xifrat_kex_ciphertext_t) ) return NULL;
 
-    xifrat_cryptogram_encode(out->cryptogram, x->q);
+    xifrat_bigram_encode(out->cryptogram, x->q);
 
     return out;
 }
@@ -247,7 +245,7 @@ void *xifrat_kex_decode_ciphertext(
 {
     if( inlen < sizeof(xifrat_kex_ciphertext_t) ) return NULL;
 
-    xifrat_cryptogram_decode(x->q, in->cryptogram);
+    xifrat_bigram_decode(x->q, in->cryptogram);
 
     return x;
 }

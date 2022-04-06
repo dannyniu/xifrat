@@ -4,7 +4,7 @@
 
 void prng_src(void *restrict x, void *restrict data, size_t len)
 {
-    x = x;
+    (void)x;
     randombytes(data, len);
 }
 

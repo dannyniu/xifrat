@@ -4,7 +4,7 @@
 
 void prng_src(void *restrict x, void *restrict data, size_t len)
 {
-    x = x;
+    (void)x;
     randombytes(data, len);
 }
 
@@ -39,7 +39,7 @@ int crypto_kem_enc(
 
     xifrat_kex_enc(
         &x, (void *)ss,
-        sizeof(uint64x7_t),
+        sizeof(uint64x14_t),
         prng_src, NULL);
 
     xifrat_kex_encode_ciphertext(
@@ -65,7 +65,7 @@ int crypto_kem_dec(
 
     xifrat_kex_dec(
         &x, (void *)ss,
-        sizeof(uint64x7_t));
+        sizeof(uint64x14_t));
 
     return 0;
 }
