@@ -147,7 +147,7 @@ g h i
   <ol>
     <li> Uniformly randomly generate choose a 8-octet &<$ seed &> , </li>
     <li> Generate &<$ a, c, e, g, i &> using
-      &<$ \Hx_{[896]&times;5}(seed) &> , </li>
+      &<$ \Hx_{[896-14]&times;5}(seed) &> , </li>
     <li> Uniformly randomly generate 2 cryptograms &<$ b, h &> , </li>
     <li> Compute &<$ p = (b &#x2219; e &#x2219; h) &> , </li>
     <li> Return &<$ pk = ( seed , p ) &> as the public key and
@@ -159,7 +159,7 @@ g h i
   <figcaption><?= $algo_kem_enc ?></figcaption>
   <ol>
     <li> Expand &<$ seed &> into &<$ a, c, e, g, i &>
-      using &<$ \Hx_{[896]&times;5}(seed) &> , </li>
+      using &<$ \Hx_{[896-14]&times;5}(seed) &> , </li>
     <li> Uniformly randomly generate 2 cryptograms &<$ d, f &> , </li>
     <li> Compute &<$ ss =
       (a &#x2219; d &#x2219; g)
