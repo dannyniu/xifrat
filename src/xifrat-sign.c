@@ -7,7 +7,7 @@ void *xifrat_sign_keygen(
     xifrat_sign_privkey_context_t *restrict x,
     GenFunc_t prng_gen, void *restrict prng)
 {
-    uint64x7_t cryptogram;
+    uint64x14_t cryptogram;
 
     prng_gen(prng, &cryptogram, sizeof(cryptogram));
     xifrat_cryptogram_decode(x->C, cryptogram);
@@ -18,8 +18,8 @@ void *xifrat_sign_keygen(
     prng_gen(prng, &cryptogram, sizeof(cryptogram));
     xifrat_cryptogram_decode(x->Q, cryptogram);
 
-    xifrat_Enc(x->P1, x->C, x->K);
-    xifrat_Mlt(x->P2, x->K, x->Q);
+    xifrat_Dup(x->P1, x->C, x->K);
+    xifrat_Dup(x->P2, x->K, x->Q);
 
     return x;
 }
@@ -28,18 +28,18 @@ void *xifrat_sign_sign(
     xifrat_sign_privkey_context_t *restrict x,
     void const *restrict msg, size_t msglen)
 {
-    uint64x7_t cryptogram, ct;
+    uint64x14_t cryptogram, ct;
     shake256_t hash;
     int i;
 
-    for(i=0; i<VLEN; i++) cryptogram[i] = 0;
+    for(i=0; i<DLEN*VLEN; i++) cryptogram[i] = 0;
     SHAKE256_Init(&hash);
     SHAKE_Write(&hash, msg, msglen);
     SHAKE_Final(&hash);
-    SHAKE_Read(&hash, &cryptogram, 56); // 448 bits.
+    SHAKE_Read(&hash, &cryptogram, sizeof(cryptogram));
     xifrat_cryptogram_decode(ct, cryptogram);
     
-    xifrat_Enc(x->signature, ct, x->Q);
+    xifrat_Dup(x->signature, ct, x->Q);
 
     return x;
 }
@@ -48,28 +48,28 @@ void const *xifrat_sign_verify(
     xifrat_sign_pubkey_context_t *restrict x,
     void const *restrict msg, size_t msglen)
 {
-    uint64x7_t t1, t2, ch; // signature verification transcripts.
-    uint64x7_t cryptogram;
+    uint64x14_t t1, t2, ch; // signature verification transcripts.
+    uint64x14_t cryptogram;
     shake256_t hash;
     uint64_t v;
     int i;
 
-    for(i=0; i<VLEN; i++) cryptogram[i] = 0;
+    for(i=0; i<DLEN*VLEN; i++) cryptogram[i] = 0;
     SHAKE256_Init(&hash);
     SHAKE_Write(&hash, msg, msglen);
     SHAKE_Final(&hash);
-    SHAKE_Read(&hash, &cryptogram, 56); // 448 bits.
+    SHAKE_Read(&hash, &cryptogram, sizeof(cryptogram));
     xifrat_cryptogram_decode(t2, cryptogram);
     
-    for(i=0; i<VLEN; i++) t1[i] = x->C[i];
-    xifrat_Mlt(ch, t1, t2);
-    xifrat_Enc(t1, ch, x->P2); // (CH)(KQ)
+    for(i=0; i<DLEN*VLEN; i++) t1[i] = x->C[i];
+    xifrat_Dup(ch, t1, t2);
+    xifrat_Dup(t1, ch, x->P2); // (CH)(KQ)
 
-    for(i=0; i<VLEN; i++) ch[i] = x->P1[i];
-    xifrat_Mlt(t2, ch, x->signature);
+    for(i=0; i<DLEN*VLEN; i++) ch[i] = x->P1[i];
+    xifrat_Dup(t2, ch, x->signature);
 
     v = 0;
-    for(i=0; i<VLEN; i++) v |= t1[i] ^ t2[i];
+    for(i=0; i<DLEN*VLEN; i++) v |= t1[i] ^ t2[i];
 
     v |= v >> 32;
     v |= v >> 16;

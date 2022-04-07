@@ -65,36 +65,6 @@ uint64_t xifrat_Blk(uint64_t a, uint64_t b)
     return f_wide(f_wide(f_wide(u, v), u), v);
 }
 
-void xifrat_Enc(uint64x7_t out, const uint64x7_t a, const uint64x7_t b)
-{
-    int i, j;
-
-    for(j=0; j<VLEN; j++)
-    {
-        out[j] = xifrat_Blk(xifrat_Blk(b[j], a[j]), b[j]);
-    }
-    
-    for(i=1; i<VLEN; i++)
-    {
-        for(j=0; j<VLEN; j++)
-        {
-            out[j] = xifrat_Blk(out[j], b[(i+j)%VLEN]);
-            out[j] = xifrat_Blk(out[j], a[(i+j)%VLEN]);
-            out[j] = xifrat_Blk(out[j], b[(i+j)%VLEN]);
-        }
-    }
-}
-
-void xifrat_Mlt(uint64x7_t out, const uint64x7_t a, const uint64x7_t b)
-{
-    int i;
-    
-    for(i=0; i<VLEN; i++)
-    {
-        out[i] = xifrat_Blk(a[i], b[i]);
-    }
-}
-
 void xifrat_Vec(uint64x7_t out, const uint64x7_t a, const uint64x7_t b)
 {
     uint64x7_t u, v;
@@ -147,25 +117,7 @@ void xifrat_Dup(uint64x14_t out, const uint64x14_t a, const uint64x14_t b)
     }
 }
 
-void xifrat_cryptogram_decode(uint64x7_t wx, const void *os)
-{
-    const uint64_t *buf = os;
-    int i;
-    
-    for(i=0; i<VLEN; i++)
-        wx[i] = le64toh(buf[i]) & INT64_MAX;
-}
-
-void xifrat_cryptogram_encode(void *os, const uint64x7_t wx)
-{
-    uint64_t *buf = os;
-    int i;
-
-    for(i=0; i<VLEN; i++)
-        buf[i] = htole64(wx[i] & INT64_MAX);
-}
-
-void xifrat_bigram_decode(uint64x14_t wx, const void *os)
+void xifrat_cryptogram_decode(uint64x14_t wx, const void *os)
 {
     const uint64_t *buf = os;
     int i;
@@ -174,7 +126,7 @@ void xifrat_bigram_decode(uint64x14_t wx, const void *os)
         wx[i] = le64toh(buf[i]) & INT64_MAX;
 }
 
-void xifrat_bigram_encode(void *os, const uint64x14_t wx)
+void xifrat_cryptogram_encode(void *os, const uint64x14_t wx)
 {
     uint64_t *buf = os;
     int i;

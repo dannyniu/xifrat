@@ -1,8 +1,8 @@
 LDFLAGS = `pkg-config --libs openssl`
 CFLAGS = `pkg-config --cflags openssl`
 OBJS = kex.o rng.o PQCgenKAT_kem.o \
-../../src/xifrat-kex.o \
-../../src/xifrat-funcs.o \
+../../src/xifrat-kex.c \
+../../src/xifrat-funcs.c \
 ../../src-crypto/shake.o \
 ../../src-crypto/sponge.o \
 ../../src-crypto/keccak-f-1600.o \

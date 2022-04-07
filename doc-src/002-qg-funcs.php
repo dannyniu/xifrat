@@ -1,13 +1,18 @@
 <?php
  require_once(getenv("HARDCOPY_SRCINC_MAIN"));
 
- $hdr1 = hc_H1("Quasigroup and the Blk block function");
+ $hdr1 = hc_H1("The quasigroup and building block functions");
 
  $hdr1_1 = hc_H2("The restricted commutative quasigroup");
  $hdr1_2 = hc_H2("The generalized restricted commutativity");
  $hdr1_3 = hc_H2("The Blk block function");
 
- $algo1 = hc_Figure("The algorithm for the Blk function");
+ $algo_Blk = hc_Figure("The algorithm for the Blk function");
+
+ $hdr1_4 = hc_H2("The Vec and Dup functions");
+
+ $algo_Vec = hc_Figure("The algorithm for the Vec function");
+ $algo_Dup = hc_Figure("The algorithm for the Dup function");
 
  if( !hcPageBegin() ) return;
 ?>
@@ -181,7 +186,7 @@
 </p>
 
 <figure class="algorithm">
-  <figcaption><?= $algo1 ?></figcaption>
+  <figcaption><?= $algo_Blk ?></figcaption>
   <ul>
     <li>Input: &<$ A=(a_0 a_1 ... a_{20}) , B=(b_0 b_1 ... b_{20}) &></li>
     <li>Output: &<$ C=(c_0 c_1 ... c_{20}) &></li>
@@ -217,9 +222,86 @@
   if this is exploitable in the actual KEM and DSS scheme.
 </p>
 
+<?= $hdr1_4 ?>
+
 <p>
-  We propose the <b>2nd open problem</b> of this paper:
-  Is there other more efficient construction which is similar to both
-  Blk and Enc, in that such construction provides key-hiding and
-  is restricted-commutative over itself?
+  The purpose of the Vec function is the same as that of the Blk function,
+  except it works over a larger domain. The Vec function takes 2
+  vectors of 7 63-bit slices. each are 448-bit long with 441 effective bits,
+  and return 1 vector as result. The construction of Vec is structurally
+  similar to Blk.
+</p>
+
+<p>
+  Within the Vec function, each of the 63-bit slices are ''hashed'' in the
+  Blk function, and applied sequentially twice interlaced with the other
+  operand. An obvious flaw is that, if we can <em>individually</em>
+  brutal-force the slices, then we can evaluate either operand without
+  knowing it in full, which leads to a fatal break. (This had been an
+  oversight in the previous versions of this paper, which we fix now, by
+  appending the Roman numeral ".I" to the name of both schemes.)
+</p>
+
+<p>
+  This is why, another layer is needed, which we call Dup. The operands
+  for the Dup function are in the form of bi-gram of vectors, where the
+  vectors are operands to the Vec function. The purpose of Dup is, yet again,
+  the same as Blk as well as Vec, but this time, the 7 slices are ''hashed'',
+  requiring attacker to brutal force &<$ 7 &times; 63 = 441 &> bits.
+  While this is a overkill for almost every scenario, we leave this
+  as an overhead in case any powerful cryptanalytic attack is discovered.
+</p>
+
+<figure class="algorithm">
+  <figcaption><?= $algo_Vec ?></figcaption>
+  <ul>
+    <li>Input: &<$ A=(A_0 A_1 ... A_6) , B=(B_0 B_1 ... B_6) &></li>
+    <li>Output: &<$ C=(C_0 C_1 ... C_6) &></li>
+  </ul>
+  <p>Steps:</p>
+  <ul>
+    <li>&<$ C_0 =
+      (A_0 A_1 ... A_6) (B_0 B_1 ... B_6)
+      (A_0 A_1 ... A_6) (B_0 B_1 ... B_6) &></li>
+    <li>&<$ C_1 =
+      (A_1 A_2 ... A_0) (B_1 B_2 ... B_0)
+      (A_1 A_2 ... A_0) (B_1 B_2 ... B_0) &></li>
+    <li>&<$ C_2 =
+      (A_2 A_3 ... A_1) (B_2 B_3 ... B_1)
+      (A_2 A_3 ... A_1) (B_2 B_3 ... B_1) &></li>
+    <li> ... </li>
+    <li>&<$ C_6 =
+      (A_6 A_0 ... A_5) (B_6 B_0 ... B_5)
+      (A_6 A_0 ... A_5) (B_6 B_0 ... B_5) &></li>
+  </ul>
+</figure>
+
+<figure class="algorithm">
+  <figcaption><?= $algo_Dup ?></figcaption>
+  <ul>
+    <li>Input: &<$ A=(A_0 A_1) , B=(B_0 B_1) &></li>
+    <li>Output: &<$ C=(C_0 C_1) &></li>
+  </ul>
+  <p>Steps:</p>
+  <ul>
+    <li>&<$ C_0 =
+      (A_0 A_1) (B_0 B_1)
+      (A_0 A_1) (B_0 B_1) &></li>
+    <li>&<$ C_1 =
+      (A_1 A_0) (B_1 B_0)
+      (A_1 A_0) (B_1 B_0) &></li>
+  </ul>
+</figure>
+
+<p>
+  Programmatically, the operands to Vec and Dup functions are represented
+  as array types: <code>uint64_t[7]</code> and <code>uint64_t[14]</code> .
+  For the Dup function, slice indicies 0~6 corresponds to the vector at
+  index 0 of the bi-gram and indicies 7~13 corresponds to that at 1. We will
+  call operands to the Dup function "cryptograms" of the Xifrat schemes.
+</p>
+
+<p>
+  For ease of readability, we denote the Dup function as &<$ D(a,b) &>
+  and &<$ D(D(a,b),c) &> as &<$ (a &#x2219; b &#x2219; c) &> .
 </p>

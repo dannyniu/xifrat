@@ -1,13 +1,14 @@
 <?php
  require_once(getenv("HARDCOPY_SRCINC_MAIN"));
 
- $hdr1 = hc_H1("The Vec and Dup functions and Xifrat1-Kex.I");
+ $hdr1 = hc_H1("The digital signature and key exchange schemes");
 
- $hdr1_1 = hc_H2("Restricted Commutativity of Vec and Dup over themselves");
+ $hdr1_1 = hc_H2("The Xifrat1-Sign.I DSS");
 
- $algo_Vec = hc_Figure("The algorithm for the Vec function");
- $algo_Dup = hc_Figure("The algorithm for the Dup function");
- 
+ $algo_dss_keygen = hc_Figure("Xifrat1-Sign.I Key Generation");
+ $algo_dss_sign   = hc_Figure("Xifrat1-Sign.I Signature Generation");
+ $algo_dss_verify = hc_Figure("Xifrat1-Sign.I Signature Verification");
+
  $hdr1_2 = hc_H2("The Xifrat1-Kex.I KEM");
 
  $algo_kem_keygen = hc_Figure("Xifrat1-Kex.I Key Generation");
@@ -19,88 +20,88 @@
 
 <?= $hdr1 ?>
 
-<p>
-  In this section, we present the Vec and the Dup function, discuss the
-  properties needed for constructing key exchange from it, and present
-  such construction.
-</p>
-
 <?= $hdr1_1 ?>
 
 <p>
-  The purpose of the Vec function is the same as that of the Blk function,
-  except it works over a different domain. The Vec function works over 2
-  cryptograms that's made up of 7 63-bit slices similar to Enc and Mlt.
-  The cryptogram is also 448-bit long with 441 effective bits.
-  The construction of Vec is structurally similar to Blk.
+  In this section, we present the Xifrat1-Sign.I digital signature scheme.
+  The general structure is similar to Xifrat0-Sign, but uses the Dup function
+  to actually achieve unforgeability.
 </p>
 
 <p>
-  Within the Vec function, each of the 63-bit slices are ''hashed'' in the
-  Blk function, and applied sequentially twice interlaced with the other
-  operand. An obvious flaw is that, if we can <em>individually</em>
-  brutal-force the slices, then we can evaluate the key exchange maths,
-  which is a fatal break. (This had been an oversight in the previous
-  versions of this paper, which we fix now, by appending the Roman numeral
-  ".I" to the name of the scheme.)
-</p>
-
-<p>
-  This is why, another layer is needed, which we call Dup. The purpose of
-  Dup is, yet again, the same as Blk as well as Vec, but this time,
-  the 7 slices are ''hashed'', requiring attacker to brutal force
-  &<$ 7 &times; 63 = 441 &> bits. While this is a overkill for almost every
-  scenario, we leave this as an overhead in case any powerful cryptanalytic
-  attack is discovered.
+  As with Xifrat0-Sign, we use a hash function, which is instantiated with
+  the XOF SHAKE-256. We take its initial 896-bit output, interpret it as
+  14 64-bit unsigned integers in little-endian, and clear each of their
+  top bits. We denote this hash function as &<$ \Hx_{896-14}(m) &> .
 </p>
 
 <figure class="algorithm">
-  <figcaption><?= $algo_Vec ?></figcaption>
-  <ul>
-    <li>Input: &<$ A=(A_0 A_1 ... A_6) , B=(B_0 B_1 ... B_6) &></li>
-    <li>Output: &<$ C=(C_0 C_1 ... C_6) &></li>
-  </ul>
-  <p>Steps:</p>
-  <ul>
-    <li>&<$ C_0 =
-      (A_0 A_1 ... A_6) (B_0 B_1 ... B_6)
-      (A_0 A_1 ... A_6) (B_0 B_1 ... B_6) &></li>
-    <li>&<$ C_1 =
-      (A_1 A_2 ... A_0) (B_1 B_2 ... B_0)
-      (A_1 A_2 ... A_0) (B_1 B_2 ... B_0) &></li>
-    <li>&<$ C_2 =
-      (A_2 A_3 ... A_1) (B_2 B_3 ... B_1)
-      (A_2 A_3 ... A_1) (B_2 B_3 ... B_1) &></li>
-    <li> ... </li>
-    <li>&<$ C_6 =
-      (A_6 A_0 ... A_5) (B_6 B_0 ... B_5)
-      (A_6 A_0 ... A_5) (B_6 B_0 ... B_5) &></li>
-  </ul>
+  <figcaption><?= $algo_dss_keygen ?></figcaption>
+  <ol>
+    <li>
+      Uniformly randomly generate 3 cryptograms:
+      &<$ c, k, &> and &<$ q &> ,
+    </li>
+
+    <li>
+      Compute &<$ p_1 = D(c,k) , p_2 = D(k,q) &> ,
+    </li>
+
+    <li>
+      Return public-key &<$ pk = ( c , p_1 , p_2 ) &>
+      and private-key &<$ sk = ( c , k , q ) &> .
+    </li>
+  </ol>
 </figure>
 
 <figure class="algorithm">
-  <figcaption><?= $algo_Dup ?></figcaption>
-  <ul>
-    <li>Input: &<$ A=(A_0 A_1) , B=(B_0 B_1) &></li>
-    <li>Output: &<$ C=(C_0 C_1) &></li>
-  </ul>
-  <p>Steps:</p>
-  <ul>
-    <li>&<$ C_0 =
-      (A_0 A_1) (B_0 B_1)
-      (A_0 A_1) (B_0 B_1) &></li>
-    <li>&<$ C_1 =
-      (A_1 A_0) (B_1 B_0)
-      (A_1 A_0) (B_1 B_0) &></li>
-  </ul>
+  <figcaption><?= $algo_dss_sign ?></figcaption>
+  <ol>
+    <li> <b>Input:</b> &<$ m &> - the message </li>
+    <li> Compute &<$ h = \Hx_{896-14}(m) &> , </li>
+    <li> Compute &<$ s = D(h,q) &> , </li>
+    <li> Return &<$ s &> , </li>
+  </ol>
+</figure>
+
+<figure class="algorithm">
+  <figcaption><?= $algo_dss_verify ?></figcaption>
+  <ol>
+    <li> <b>Input:</b> &<$ m &> - the message , &<$ S &> - the signature </li>
+    <li> Compute &<$ h = \Hx_{896-14}(m) &> , </li>
+    <li> Compute &<$ t_1 = D( p_1 , s ) &> , </li>
+    <li> Compute &<$ t_2 = D( D(c,h) , p_2 ) &> , </li>
+    <li> If &<$ t_1 = t_2 &> return [VALID] ; otherwise return [INVALID].</li>
+  </ol>
 </figure>
 
 <p>
-  For ease of readability, &<$ D(D(a,b),c) &>
-  will be rewritten as &<$ (a &#x2219; b &#x2219; c) &> .
+  The proof of correctness of the scheme is as follow:
 </p>
+
+<p>
+  &<$ t_1 = D( p_1 , s ) = D( D(c,k) , D(h,q) ) &> <br/>
+  &<$ t_2 = D( D(c,h) , p_2 ) = D( D(c,h) , D(k,q) ) &> <br/>
+  By restricted commutativity, we have &<$ t_1 = t_2 &> .
+</p>
+
+<table class="infobox">
+  <thead>
+    <th colspan="2">Parameters</th>
+  </thead>
+
+  <tbody>
+    <tr><th>private key bytes</th><td>560</td></tr>
+    <tr><th>public key bytes</th><td>336</td></tr>
+    <tr><th>signature bytes</th><td>112</td></tr>
+  </tbody>
+</table>
 
 <?= $hdr1_2 ?>
+
+<p>
+  In this section, we present construction for key exchange.
+</p>
 
 <p>
   As we've had the generalized restricted-commutativity property, we can
@@ -135,18 +136,18 @@ g h i
   It is obvious at this point that the public information can be derived from
   a seed using some extendable output function (XOF),
   (prior art: <?= cite("ref-newhope") ?>). We instantiate such XOF with
-  SHAKE-128. We take 448-bit in turn, interpret it as 7 64-bit
+  SHAKE-128. We take 896-bit in turn, interpret it as 14 64-bit
   unsigned integers in little-endian and clear each of their top bits, and
   generate 5 of these and assign them to &<$ a, c, e, g, i &> in order.
-  We denote this XOF as &<$ \Hx_{[448-7]&times;2}(seed) &> .
+  We denote this XOF as &<$ \Hx_{[896-14]&times;5}(seed) &> .
 </p>
 
 <figure class="algorithm">
   <figcaption><?= $algo_kem_keygen ?></figcaption>
   <ol>
-    <li> Uniformly randomly generate choose a &<$ seed &> , </li>
+    <li> Uniformly randomly generate choose a 8-octet &<$ seed &> , </li>
     <li> Generate &<$ a, c, e, g, i &> using
-      &<$ \Hx_{[448-7]&times;2}(seed) &> , </li>
+      &<$ \Hx_{[896]&times;5}(seed) &> , </li>
     <li> Uniformly randomly generate 2 cryptograms &<$ b, h &> , </li>
     <li> Compute &<$ p = (b &#x2219; e &#x2219; h) &> , </li>
     <li> Return &<$ pk = ( seed , p ) &> as the public key and
@@ -158,7 +159,7 @@ g h i
   <figcaption><?= $algo_kem_enc ?></figcaption>
   <ol>
     <li> Expand &<$ seed &> into &<$ a, c, e, g, i &>
-      using &<$ \Hx_{[448-7]&times;2}(seed) &> , </li>
+      using &<$ \Hx_{[896]&times;5}(seed) &> , </li>
     <li> Uniformly randomly generate 2 cryptograms &<$ d, f &> , </li>
     <li> Compute &<$ ss =
       (a &#x2219; d &#x2219; g)

@@ -18,26 +18,26 @@ void *xifrat_kex_keygen(
     SHAKE_Final(&xof);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->a, cryptogram);
+    xifrat_cryptogram_decode(x->a, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->c, cryptogram);
+    xifrat_cryptogram_decode(x->c, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->e, cryptogram);
+    xifrat_cryptogram_decode(x->e, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->g, cryptogram);
+    xifrat_cryptogram_decode(x->g, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->i, cryptogram);
+    xifrat_cryptogram_decode(x->i, cryptogram);
 
     // generate private key
     prng_gen(prng, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->s1, cryptogram); // b
+    xifrat_cryptogram_decode(x->s1, cryptogram); // b
 
     prng_gen(prng, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->s2, cryptogram); // h
+    xifrat_cryptogram_decode(x->s2, cryptogram); // h
 
     // compute the public key
     xifrat_Dup(x->q, x->s1, x->e);
@@ -63,10 +63,10 @@ void *xifrat_kex_enc(
 
     // generate ciphertext
     prng_gen(prng, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->s1, cryptogram); // d
+    xifrat_cryptogram_decode(x->s1, cryptogram); // d
 
     prng_gen(prng, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->s2, cryptogram); // f
+    xifrat_cryptogram_decode(x->s2, cryptogram); // f
 
     xifrat_Dup(w, x->s1, x->e);
     xifrat_Dup(x->q, w, x->s2);
@@ -83,7 +83,7 @@ void *xifrat_kex_enc(
 
     // output the shared secret as a cryptogram
     // (needs to be hashed by e.g. HKDF)
-    xifrat_bigram_encode(cryptogram, u);
+    xifrat_cryptogram_encode(cryptogram, u);
     for(i=0; i<sizeof(cryptogram) && i<sslen; i++)
         ((uint8_t *)ss)[i] = ((uint8_t *)cryptogram)[i];
     for(; i<sslen; i++)
@@ -105,7 +105,7 @@ void *xifrat_kex_dec(
     
     // output the shared secret as a cryptogram
     // (needs to be hashed by e.g. HKDF)
-    xifrat_bigram_encode(cryptogram, x->i);
+    xifrat_cryptogram_encode(cryptogram, x->i);
     for(i=0; i<sizeof(cryptogram) && i<sslen; i++)
         ((uint8_t *)ss)[i] = ((uint8_t *)cryptogram)[i];
     for(; i<sslen; i++)
@@ -123,7 +123,7 @@ void *xifrat_kex_export_pubkey(
     if( outlen < sizeof(xifrat_kex_pubkey_t) ) return NULL;
     
     for(i=0; i<XIFRAT_SEEDLEN; i++) out->seed[i] = x->seed[i];
-    xifrat_bigram_encode(out->p, x->p);
+    xifrat_cryptogram_encode(out->p, x->p);
 
     return out;
 }
@@ -146,22 +146,22 @@ void *xifrat_kex_decode_pubkey(
     SHAKE_Final(&xof);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->a, cryptogram);
+    xifrat_cryptogram_decode(x->a, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->c, cryptogram);
+    xifrat_cryptogram_decode(x->c, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->e, cryptogram);
+    xifrat_cryptogram_decode(x->e, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->g, cryptogram);
+    xifrat_cryptogram_decode(x->g, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->i, cryptogram);
+    xifrat_cryptogram_decode(x->i, cryptogram);
 
     // copy public cryptogram
-    xifrat_bigram_decode(x->p, in->p);
+    xifrat_cryptogram_decode(x->p, in->p);
 
     return x;
 }
@@ -175,8 +175,8 @@ void *xifrat_kex_encode_privkey(
     if( outlen < sizeof(xifrat_kex_pubkey_t) ) return NULL;
     
     for(i=0; i<XIFRAT_SEEDLEN; i++) out->seed[i] = x->seed[i];
-    xifrat_bigram_encode(out->s1, x->s1);
-    xifrat_bigram_encode(out->s2, x->s2);
+    xifrat_cryptogram_encode(out->s1, x->s1);
+    xifrat_cryptogram_encode(out->s2, x->s2);
 
     return out;
 }
@@ -197,23 +197,23 @@ void *xifrat_kex_decode_privkey(
     SHAKE_Final(&xof);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->a, cryptogram);
+    xifrat_cryptogram_decode(x->a, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->c, cryptogram);
+    xifrat_cryptogram_decode(x->c, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->e, cryptogram);
+    xifrat_cryptogram_decode(x->e, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->g, cryptogram);
+    xifrat_cryptogram_decode(x->g, cryptogram);
 
     SHAKE_Read(&xof, cryptogram, sizeof(cryptogram));
-    xifrat_bigram_decode(x->i, cryptogram);
+    xifrat_cryptogram_decode(x->i, cryptogram);
 
     // generate private key
-    xifrat_bigram_encode(x->s1, in->s1); // b
-    xifrat_bigram_encode(x->s2, in->s2); // h
+    xifrat_cryptogram_encode(x->s1, in->s1); // b
+    xifrat_cryptogram_encode(x->s2, in->s2); // h
     
     // compute the public key
     xifrat_Dup(x->q, x->s1, x->e);
@@ -234,7 +234,7 @@ void *xifrat_kex_encode_ciphertext(
 {
     if( outlen < sizeof(xifrat_kex_ciphertext_t) ) return NULL;
 
-    xifrat_bigram_encode(out->cryptogram, x->q);
+    xifrat_cryptogram_encode(out->cryptogram, x->q);
 
     return out;
 }
@@ -245,7 +245,7 @@ void *xifrat_kex_decode_ciphertext(
 {
     if( inlen < sizeof(xifrat_kex_ciphertext_t) ) return NULL;
 
-    xifrat_bigram_decode(x->q, in->cryptogram);
+    xifrat_cryptogram_decode(x->q, in->cryptogram);
 
     return x;
 }

@@ -6,13 +6,13 @@
 #include "xifrat-funcs.h"
 
 typedef struct {
-    uint64x7_t C, K, Q, P1, P2;
-    uint64x7_t signature;
+    uint64x14_t C, K, Q, P1, P2;
+    uint64x14_t signature;
 } xifrat_sign_privkey_context_t;
 
 typedef struct {
-    uint64x7_t C, P1, P2;
-    uint64x7_t signature;
+    uint64x14_t C, P1, P2;
+    uint64x14_t signature;
 } xifrat_sign_pubkey_context_t;
 
 // returns x on success and NULL on failure.
@@ -31,7 +31,7 @@ void const *xifrat_sign_verify(
     void const *restrict msg, size_t msglen);
 
 typedef struct {
-    uint64x7_t C, P1, P2;
+    uint64x14_t C, P1, P2;
 } xifrat_sign_pubkey_t;
 
 // returns out on success and NULL on failure (e.g. outlen too short).
@@ -45,7 +45,7 @@ void *xifrat_sign_decode_pubkey(
     xifrat_sign_pubkey_t const *restrict in, size_t inlen);
 
 typedef struct {
-    uint64x7_t C, K, Q, P1, P2;
+    uint64x14_t C, K, Q, P1, P2;
 } xifrat_sign_privkey_t;
 
 // returns out on success and NULL on failure (e.g. outlen too short).
@@ -59,7 +59,7 @@ void *xifrat_sign_decode_privkey(
     xifrat_sign_privkey_t const *restrict in, size_t inlen);
 
 typedef struct {
-    uint64x7_t signature;
+    uint64x14_t signature;
 } xifrat_sign_signature_t;
 
 // returns out on success and NULL on failure (e.g. outlen too short).
