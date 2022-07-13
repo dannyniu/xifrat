@@ -17,7 +17,7 @@
 
 <p style="line-height: 2;">
   &<$ P&lt;Q,n&gt; := ( Q^n , O : Q^n &times; Q^n &rarr; Q^n ) &>
-  where <br/>
+  <br/>where<br/>
 
   &<$ O(a^n, b^n) = uvuv &>
   and<br/>
@@ -47,14 +47,10 @@
   The Xifrat1 cryptosystem uses 3 layers:
 </p>
 
-<p>
+<p style="line-height: 1.6;">
   The 1st layer is &<$ (B,Blk) := P&lt;{"\tritets"},21&gt; &>
-</p>
-
-<p>
+  <br/>
   The 2nd layer is &<$ (V,Vec) := P&lt;B,7&gt; &>
-</p>
-
-<p>
+  <br/>
   The final outter-mose layer is &<$ (D,Dup) := P&lt;V,2&gt; &>
 </p>
