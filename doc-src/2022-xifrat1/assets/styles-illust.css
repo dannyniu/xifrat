@@ -1,0 +1,21 @@
+figure.algorithm {
+  padding:              0pc 1pc;
+  border-top:           solid medium black;
+  border-bottom:        solid medium black;
+  break-inside:         avoid;
+}
+
+figure.algorithm figcaption {
+  text-align:           center;
+  border-bottom:        solid thin black;
+}
+
+table.infobox {
+  border-collapse:      collapse;
+}
+
+table.infobox th,
+table.infobox td {
+  padding:              1mm;
+  border:               solid thin black;
+}
