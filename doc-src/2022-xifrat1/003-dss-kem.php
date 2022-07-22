@@ -30,9 +30,9 @@
 
 <p>
   As with Xifrat0-Sign, we use a hash function, which is instantiated with
-  the XOF SHAKE-256. We take its initial 896-bit output, interpret it as
-  14 64-bit unsigned integers in little-endian, and clear each of their
-  top bits. We denote this hash function as &<$ \Hx_{896-14}(m) &> .
+  the XOF SHAKE-256. We take its initial 768-bit output, interpret it as
+  12 64-bit unsigned integers in little-endian. We denote this hash function
+  as &<$ \Hx_{768}(m) &> .
 </p>
 
 <figure class="algorithm">
@@ -58,7 +58,7 @@
   <figcaption><?= $algo_dss_sign ?></figcaption>
   <ol>
     <li> <b>Input:</b> &<$ m &> - the message </li>
-    <li> Compute &<$ h = \Hx_{896-14}(m) &> , </li>
+    <li> Compute &<$ h = \Hx_{768}(m) &> , </li>
     <li> Compute &<$ s = D(h,q) &> , </li>
     <li> Return &<$ s &> , </li>
   </ol>
@@ -68,7 +68,7 @@
   <figcaption><?= $algo_dss_verify ?></figcaption>
   <ol>
     <li> <b>Input:</b> &<$ m &> - the message , &<$ S &> - the signature </li>
-    <li> Compute &<$ h = \Hx_{896-14}(m) &> , </li>
+    <li> Compute &<$ h = \Hx_{768}(m) &> , </li>
     <li> Compute &<$ t_1 = D( p_1 , s ) &> , </li>
     <li> Compute &<$ t_2 = D( D(c,h) , p_2 ) &> , </li>
     <li> If &<$ t_1 = t_2 &> return [VALID] ; otherwise return [INVALID].</li>
@@ -91,9 +91,9 @@
   </thead>
 
   <tbody>
-    <tr><th>private key bytes</th><td>560</td></tr>
-    <tr><th>public key bytes</th><td>336</td></tr>
-    <tr><th>signature bytes</th><td>112</td></tr>
+    <tr><th>private key bytes</th><td>480</td></tr>
+    <tr><th>public key bytes</th><td>288</td></tr>
+    <tr><th>signature bytes</th><td>96</td></tr>
   </tbody>
 </table>
 
@@ -136,10 +136,10 @@ g h i
   It is obvious at this point that the public information can be derived from
   a seed using some extendable output function (XOF),
   (prior art: <?= cite("ref-newhope") ?>). We instantiate such XOF with
-  SHAKE-128. We take 896-bit in turn, interpret it as 14 64-bit
-  unsigned integers in little-endian and clear each of their top bits, and
-  generate 5 of these and assign them to &<$ a, c, e, g, i &> in order.
-  We denote this XOF as &<$ \Hx_{[896-14]&times;5}(seed) &> .
+  SHAKE-128. We take 768-bit in turn, interpret it as 12 64-bit
+  unsigned integers in little-endian, and generate 5 of these and
+  assign them to &<$ a, c, e, g, i &> in order.
+  We denote this XOF as &<$ \Hx_{[768]&times;5}(seed) &> .
 </p>
 
 <figure class="algorithm">
@@ -147,7 +147,7 @@ g h i
   <ol>
     <li> Uniformly randomly generate choose a 8-octet &<$ seed &> , </li>
     <li> Generate &<$ a, c, e, g, i &> using
-      &<$ \Hx_{[896-14]&times;5}(seed) &> , </li>
+      &<$ \Hx_{[768]&times;5}(seed) &> , </li>
     <li> Uniformly randomly generate 2 cryptograms &<$ b, h &> , </li>
     <li> Compute &<$ p = (b &#x2219; e &#x2219; h) &> , </li>
     <li> Return &<$ pk = ( seed , p ) &> as the public key and
@@ -159,7 +159,7 @@ g h i
   <figcaption><?= $algo_kem_enc ?></figcaption>
   <ol>
     <li> Expand &<$ seed &> into &<$ a, c, e, g, i &>
-      using &<$ \Hx_{[896-14]&times;5}(seed) &> , </li>
+      using &<$ \Hx_{[768]&times;5}(seed) &> , </li>
     <li> Uniformly randomly generate 2 cryptograms &<$ d, f &> , </li>
     <li> Compute &<$ ss =
       (a &#x2219; d &#x2219; g)
@@ -188,8 +188,8 @@ g h i
   </thead>
 
   <tbody>
-    <tr><th>private key bytes</th><td>232</td></tr>
-    <tr><th>public key bytes</th><td>120</td></tr>
-    <tr><th>ciphertext bytes</th><td>112</td></tr>
+    <tr><th>private key bytes</th><td>200</td></tr>
+    <tr><th>public key bytes</th><td>104</td></tr>
+    <tr><th>ciphertext bytes</th><td>96</td></tr>
   </tbody>
 </table>

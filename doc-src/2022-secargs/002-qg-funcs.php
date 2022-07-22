@@ -9,9 +9,9 @@
 <?= $hdr1 ?>
 
 <p>
-  The cryptograms in Xifrat1 are vectors of 14 64-bit (63 effective) words,
-  built from 3 layers, bootstrapped from a 8x8 randomly chosen
-  abelian quasigroup whose set we call the "tritet". The cryptograms and
+  The cryptograms in Xifrat1 are vectors of 12 64-bit words,
+  built from 3 layers, bootstrapped from a 16x16 randomly chosen
+  abelian quasigroup whose set we call the "quartet". The cryptograms and
   each layer below it follow the "restricted-commutative" property.
 </p>
 
@@ -41,16 +41,16 @@
 
   By generalized restricted-commutativity, the cycling and alternating phases
   can be computed in either order and results in the same value output. The
-  reslting template mixing function preserves the restricted-commutativity
+  resulting template mixing function preserves the restricted-commutativity
   property from a lower layer to a higher layer
 
   The Xifrat1 cryptosystem uses 3 layers:
 </p>
 
 <p style="line-height: 1.6;">
-  The 1st layer is &<$ (B,Blk) := P&lt;{"\tritets"},21&gt; &>
+  The 1st layer is &<$ (B,Blk) := P&lt;{"\quartets"},16&gt; &>
   <br/>
-  The 2nd layer is &<$ (V,Vec) := P&lt;B,7&gt; &>
+  The 2nd layer is &<$ (V,Vec) := P&lt;B,6&gt; &>
   <br/>
   The final outter-mose layer is &<$ (D,Dup) := P&lt;V,2&gt; &>
 </p>

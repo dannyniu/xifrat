@@ -16,7 +16,7 @@
 
 <p>
   The same apply to Xifrat1. Recall that the "Blk" function works over
-  a vector of 21 tritets. If we can find either of &<$ u &> or &<$ v &> ,
+  a vector of 16 quartets. If we can find either of &<$ u &> or &<$ v &> ,
   then we can use that knowledge to compute that function - because
   the alternating phase works parallelly over the vector of tritet.
   This attack has to be blocked at the cycling phase of a higher layer.
@@ -26,6 +26,5 @@
   The cycling phase at a higher layer mixes together the vector elements
   of the lower layer, making it necessary to recover the vector
   in its entirety to be able to compute the mixing function. This is why
-  at 448 bits (441 effective), we still need a "Dup" layer on top of the
-  "Vec" layer.
+  at 384 bits, we still need a "Dup" layer on top of the "Vec" layer.
 </p>

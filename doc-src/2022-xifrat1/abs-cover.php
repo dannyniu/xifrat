@@ -39,3 +39,5 @@
   and readers seeking a stable reference should look for the PDF version
   published at official sources.
 </small></p>
+
+<p><small>Last significant revision dated: 2022-07-22</small>

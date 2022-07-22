@@ -15,7 +15,7 @@
 </p>
 
 <p>
-  As we said in <?= cite("ref-xifrat1") ?>, the 8x8 latin square was chosen
+  As we said in <?= cite("ref-xifrat1") ?>, the 16x16 latin square was chosen
   randomly; and we assume its quasigroup operation is also random, in the sense
   that it <em>behave as if randomly</em>.
 </p>
@@ -50,16 +50,16 @@
 <p>
   If &<$ g &> and &<$ h &> are truely random, then the only way to find
   &<$ x , y &> from &<$ u , v &> would be to try every possible solution
-  and verify each of them to find out. Because we generated our 8x8
+  and verify each of them to find out. Because we generated our 16x16
   quasigroup randomly, we assume that the underlaying automorphisms
   fulfills this property. It is further assumed, that composition of
   randomly-behaving maps are also randomly-behaving.
 </p>
 
 <p>
-  The Blk function can now be reverted, by first searching 21 independent
-  tritets from the alternating phase, then solving the "cycling" equations
-  system, which consists of 21 group equations, each with 21 automorphisms
+  The Blk function can now be reverted, by first searching 16 independent
+  quartets from the alternating phase, then solving the "cycling" equations
+  system, which consists of 16 group equations, each with 16 automorphisms
   that we had assumed to be "randomly-behaving".
 </p>
 
