@@ -1,6 +1,6 @@
 # Xifrat - Compact Public-Key Cryptosystems
 
-Xifrat is a new cryptosystem based on a quasigroup of special property.
+Xifrat is a new cryptosystem based on abelian quasigroups.
 Xifrat was first proposed by Daniel Nager, with parameters and instantiation
 selected by DannyNiu/NJF. 
 
