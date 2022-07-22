@@ -39,7 +39,7 @@ int crypto_kem_enc(
 
     xifrat_kex_enc(
         &x, (void *)ss,
-        sizeof(uint64x14_t),
+        sizeof(uint64dup_t),
         prng_src, NULL);
 
     xifrat_kex_encode_ciphertext(
@@ -65,7 +65,7 @@ int crypto_kem_dec(
 
     xifrat_kex_dec(
         &x, (void *)ss,
-        sizeof(uint64x14_t));
+        sizeof(uint64dup_t));
 
     return 0;
 }

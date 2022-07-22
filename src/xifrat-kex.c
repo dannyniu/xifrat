@@ -8,7 +8,7 @@ void *xifrat_kex_keygen(
     GenFunc_t prng_gen, void *prng)
 {
     shake128_t xof;
-    uint64x14_t cryptogram;
+    uint64dup_t cryptogram;
 
     // generate acegi from seed
     prng_gen(prng, &x->seed, XIFRAT_SEEDLEN);
@@ -57,8 +57,8 @@ void *xifrat_kex_enc(
     void *restrict ss, size_t sslen,
     GenFunc_t prng_gen, void *prng)
 {
-    uint64x14_t cryptogram;
-    uint64x14_t u, v, w;
+    uint64dup_t cryptogram;
+    uint64dup_t u, v, w;
     unsigned i;
 
     // generate ciphertext
@@ -96,7 +96,7 @@ void *xifrat_kex_dec(
     xifrat_kex_dec_context_t *restrict x,
     void *restrict ss, size_t sslen)
 {
-    uint64x14_t cryptogram;
+    uint64dup_t cryptogram;
     unsigned i;
 
     // compute the shared secret
@@ -133,7 +133,7 @@ void *xifrat_kex_decode_pubkey(
     xifrat_kex_pubkey_t const *restrict in, size_t inlen)
 {
     shake128_t xof;
-    uint64x14_t cryptogram;
+    uint64dup_t cryptogram;
     unsigned i;
 
     if( inlen < sizeof(xifrat_kex_pubkey_t) ) return NULL;
@@ -186,7 +186,7 @@ void *xifrat_kex_decode_privkey(
     xifrat_kex_privkey_t const *restrict in, size_t inlen)
 {
     shake128_t xof;
-    uint64x14_t cryptogram;
+    uint64dup_t cryptogram;
     unsigned i;
 
     // generate acegi from seed

@@ -7,7 +7,7 @@ void *xifrat_sign_keygen(
     xifrat_sign_privkey_context_t *restrict x,
     GenFunc_t prng_gen, void *restrict prng)
 {
-    uint64x14_t cryptogram;
+    uint64dup_t cryptogram;
 
     prng_gen(prng, &cryptogram, sizeof(cryptogram));
     xifrat_cryptogram_decode(x->C, cryptogram);
@@ -28,7 +28,7 @@ void *xifrat_sign_sign(
     xifrat_sign_privkey_context_t *restrict x,
     void const *restrict msg, size_t msglen)
 {
-    uint64x14_t cryptogram, ct;
+    uint64dup_t cryptogram, ct;
     shake256_t hash;
     int i;
 
@@ -48,8 +48,8 @@ void const *xifrat_sign_verify(
     xifrat_sign_pubkey_context_t *restrict x,
     void const *restrict msg, size_t msglen)
 {
-    uint64x14_t t1, t2, ch; // signature verification transcripts.
-    uint64x14_t cryptogram;
+    uint64dup_t t1, t2, ch; // signature verification transcripts.
+    uint64dup_t cryptogram;
     shake256_t hash;
     uint64_t v;
     int i;

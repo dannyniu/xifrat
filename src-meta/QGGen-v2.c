@@ -66,6 +66,49 @@ typedef struct {
     sbox_t      sbox;
 } state_t;
 
+#if true
+
+int state_test(state_t *state)
+{
+    int16_t a, b, c, d, u, v, x, y;
+    int16_t *t1, *t2;
+    int16_t p = state->p;
+
+    for(a=0; a<p; a++)
+    {
+        for(d=0; d<p; d++)
+        {
+            if( a == d && state->sbox[a*p+d] == a ) return false;
+            
+            for(b=0; b<p; b++)
+                for(c=b; c<p; c++)
+                {
+                    u = state->sbox[a*p+b];
+                    v = state->sbox[c*p+d];
+                    if( u<0 || v<0 ) continue;
+
+                    x = state->sbox[a*p+c];
+                    y = state->sbox[b*p+d];
+                    if( x<0 || y<0 ) continue;
+
+                    if( (u == x) != (v == y) ) return false;
+
+                    t1 = state->sbox + (u*p+v);
+                    t2 = state->sbox + (x*p+y);
+
+                    if( *t1<0 && *t2<0 ) continue;
+                    else if( *t1>=0 && *t2>=0 && *t1!=*t2 ) return false;
+                    else if( *t1>=0 ) *t2 = *t1;
+                    else if( *t2>=0 ) *t1 = *t2;
+                }
+        }
+    }
+
+    return true;
+}
+
+#else
+
 int state_test(const state_t *state)
 {
     int16_t a, b, c, d, u, v, x;
@@ -100,6 +143,8 @@ int state_test(const state_t *state)
 
     return true;
 }
+
+#endif
 
 static state_t statestack[P2_MAX + P_MAX];
 static state_t *sp = statestack;
@@ -217,6 +262,41 @@ loop_iter:
     return false;
 }
 
+int16_t QGValue(int16_t a, int16_t b)
+{
+    int16_t p = sp->p;
+
+    return sp->sbox[a*p+b];
+}
+
+int QGTest()
+{
+    int16_t p = sp->p;
+    int16_t a, b, c, d, u, v, x;
+
+    for(a=0; a<p; a++)
+    {
+        for(b=0; b<p; b++)
+            for(c=0; c<p; c++)
+                for(d=0; d<p; d++)
+                {
+                    u = QGValue(a, b);
+                    v = QGValue(c, d);
+                    x = QGValue(u, v);
+
+                    u = QGValue(a, c);
+                    v = QGValue(b, d);
+                    if( QGValue(u, v) != x )
+                    {
+                        printf("inconsistent!\n");
+                        return false;
+                    }
+                }
+    }
+
+    return true;
+}
+
 int main(int argc, char *argv[])
 {
     const static char seed[] = "xifrat - public-key cryptosystem";
@@ -224,6 +304,7 @@ int main(int argc, char *argv[])
     int16_t p = 8;
     int subret;
 
+    setvbuf(stdout, NULL, _IONBF, 512);
     SHAKE128_Init(&prng_ctx);
     SHAKE_Write(&prng_ctx, seed, strlen(seed));
     SHAKE_Final(&prng_ctx);
@@ -231,6 +312,8 @@ int main(int argc, char *argv[])
     if( argc > 1 ) p = atoi(argv[1]);
 
     subret = state_iter(p);
+
+    if( !QGTest() ) subret = false;
     
     for(int16_t i=0; i<p; i++)
     {

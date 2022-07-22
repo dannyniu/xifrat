@@ -8,30 +8,19 @@
 
 int main() // int argc, char *argv[])
 {
-    uint64x14_t a, b, c, d, u, v, x, y;
+    uint64dup_t a, b, c, d, u, v, x, y;
 
+    int total = 50;
     int fails = 0;
 
-    for(int i=0; i<20*20; i++)
+    setvbuf(stdout, NULL, _IONBF, 512);
+
+    for(int i=0; i<total; i++)
     {
-        fread(&a, 1, 112, stdin);
-        fread(&b, 1, 112, stdin);
-        fread(&c, 1, 112, stdin);
-        fread(&d, 1, 112, stdin);
-
-        xifrat_Enc(u, a, b);
-        xifrat_Enc(v, c, d);
-        xifrat_Mlt(x, u, v);
-
-        xifrat_Mlt(u, a, c);
-        xifrat_Mlt(v, b, d);
-        xifrat_Enc(y, u, v);
-        
-        if( memcmp(x, y, 56) )
-        {
-            printf("Enc-Mlt failed!\n");
-            fails++;
-        }
+        fread(&a, 1, sizeof(uint64dup_t), stdin);
+        fread(&b, 1, sizeof(uint64dup_t), stdin);
+        fread(&c, 1, sizeof(uint64dup_t), stdin);
+        fread(&d, 1, sizeof(uint64dup_t), stdin);
 
         xifrat_Vec(u, a, b);
         xifrat_Vec(v, c, d);
@@ -41,7 +30,7 @@ int main() // int argc, char *argv[])
         xifrat_Vec(v, b, d);
         xifrat_Vec(y, u, v);
 
-        if( memcmp(x, y, 56) )
+        if( memcmp(x, y, sizeof(uint64vec_t)) )
         {
             printf("Vec-Vec failed!\n");
             fails++;
@@ -55,12 +44,15 @@ int main() // int argc, char *argv[])
         xifrat_Dup(v, b, d);
         xifrat_Dup(y, u, v);
 
-        if( memcmp(x, y, 112) )
+        if( memcmp(x, y, sizeof(uint64dup_t)) )
         {
             printf("Dup-Dup failed!\n");
             fails++;
         }
+
+        printf("\t%d/%d\r", i, total);
     }
+    printf("\n");
 
     if( !fails )
     {
