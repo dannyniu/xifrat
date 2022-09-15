@@ -192,7 +192,7 @@
 
 <p>
   The Blk block function is defined to enlarge the quasigroup - it operates
-  on vector of 21 tritet bitstrings. This is 63-bit in total, which we fit
+  on vector of 16 quartets bitstrings. This is 64-bit in total, which we fit
   in least-significant- bit&amp;byte -first order.
 </p>
 
@@ -229,7 +229,7 @@
   <strong>There is one problem</strong> with the Blk function, that is,
   when it's given 2 vectors of repeated quartets, it produces a vector of
   repeated quartets. This is due to such input would produce same array of
-  operations at every lane of output tritet. At the moment, we do not know
+  operations at every lane of output quartet. At the moment, we do not know
   if this is exploitable in the actual KEM and DSS scheme.
 </p>
 
