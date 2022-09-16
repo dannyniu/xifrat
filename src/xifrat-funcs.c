@@ -62,7 +62,7 @@ uint64_t xifrat_Blk(uint64_t a, uint64_t b)
     u = a &= UINT64_MAX;
     v = b &= UINT64_MAX;
     
-    for(i=1; i<21; i++)
+    for(i=1; i<16; i++)
     {
         a = (a >> 4 | a << 60) & UINT64_MAX;
         b = (b >> 4 | b << 60) & UINT64_MAX;
